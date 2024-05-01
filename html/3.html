@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>¿Qué es una función de flecha?</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+
+      p,
+      h2,
+      h3 {
+        orphans: 3;
+        widows: 3;
+      }
+
+      h2,
+      h3,
+      h4 {
+        page-break-after: avoid;
+      }
+    }
+
+    p {
+      margin: 1em 0;
+    }
+
+    a {
+      color: #1a1a1a;
+    }
+
+    a:visited {
+      color: #1a1a1a;
+    }
+
+    img {
+      max-width: 100%;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      margin-top: 1.4em;
+    }
+
+    h5,
+    h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+
+    h6 {
+      font-weight: normal;
+    }
+
+    ol,
+    ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+
+    li>ol,
+    li>ul {
+      margin-top: 0;
+    }
+
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+
+    .sourceCode {
+      background-color: transparent;
+      overflow: visible;
+    }
+
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+
+    table caption {
+      margin-bottom: 0.75em;
+    }
+
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+
+    #TOC li {
+      list-style: none;
+    }
+
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+
+    #TOC>ul {
+      padding-left: 0;
+    }
+
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+
+    code {
+      white-space: pre-wrap;
+    }
+
+    span.smallcaps {
+      font-variant: small-caps;
+    }
+
+    div.columns {
+      display: flex;
+      gap: min(4vw, 1.5em);
+    }
+
+    div.column {
+      flex: auto;
+      overflow-x: auto;
+    }
+
+    div.hanging-indent {
+      margin-left: 1.5em;
+      text-indent: -1.5em;
+    }
+
+    ul.task-list {
+      list-style: none;
+    }
+
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+
+    pre>code.sourceCode {
+      white-space: pre;
+      position: relative;
+    }
+
+    pre>code.sourceCode>span {
+      display: inline-block;
+      line-height: 1.25;
+    }
+
+    pre>code.sourceCode>span:empty {
+      height: 1.2em;
+    }
+
+    .sourceCode {
+      overflow: visible;
+    }
+
+    code.sourceCode>span {
+      color: inherit;
+      text-decoration: inherit;
+    }
+
+    div.sourceCode {
+      margin: 1em 0;
+    }
+
+    pre.sourceCode {
+      margin: 0;
+    }
+
+    @media screen {
+      div.sourceCode {
+        overflow: auto;
+      }
+    }
+
+    @media print {
+      pre>code.sourceCode {
+        white-space: pre-wrap;
+      }
+
+      pre>code.sourceCode>span {
+        text-indent: -5em;
+        padding-left: 5em;
+      }
+    }
+
+    pre.numberSource code {
+      counter-reset: source-line 0;
+    }
+
+    pre.numberSource code>span {
+      position: relative;
+      left: -4em;
+      counter-increment: source-line;
+    }
+
+    pre.numberSource code>span>a:first-child::before {
+      content: counter(source-line);
+      position: relative;
+      left: -1em;
+      text-align: right;
+      vertical-align: baseline;
+      border: none;
+      display: inline-block;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      padding: 0 4px;
+      width: 4em;
+      color: #aaaaaa;
+    }
+
+    pre.numberSource {
+      margin-left: 3em;
+      border-left: 1px solid #aaaaaa;
+      padding-left: 4px;
+    }
+
+    div.sourceCode {}
+
+    @media screen {
+      pre>code.sourceCode>span>a:first-child::before {
+        text-decoration: underline;
+      }
+    }
+
+    code span.al {
+      color: #ff0000;
+      font-weight: bold;
+    }
+
+    /* Alert */
+    code span.an {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* Annotation */
+    code span.at {
+      color: #7d9029;
+    }
+
+    /* Attribute */
+    code span.bn {
+      color: #40a070;
+    }
+
+    /* BaseN */
+    code span.bu {
+      color: #008000;
+    }
+
+    /* BuiltIn */
+    code span.cf {
+      color: #007020;
+      font-weight: bold;
+    }
+
+    /* ControlFlow */
+    code span.ch {
+      color: #4070a0;
+    }
+
+    /* Char */
+    code span.cn {
+      color: #880000;
+    }
+
+    /* Constant */
+    code span.co {
+      color: #60a0b0;
+      font-style: italic;
+    }
+
+    /* Comment */
+    code span.cv {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* CommentVar */
+    code span.do {
+      color: #ba2121;
+      font-style: italic;
+    }
+
+    /* Documentation */
+    code span.dt {
+      color: #902000;
+    }
+
+    /* DataType */
+    code span.dv {
+      color: #40a070;
+    }
+
+    /* DecVal */
+    code span.er {
+      color: #ff0000;
+      font-weight: bold;
+    }
+
+    /* Error */
+    code span.ex {}
+
+    /* Extension */
+    code span.fl {
+      color: #40a070;
+    }
+
+    /* Float */
+    code span.fu {
+      color: #06287e;
+    }
+
+    /* Function */
+    code span.im {
+      color: #008000;
+      font-weight: bold;
+    }
+
+    /* Import */
+    code span.in {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* Information */
+    code span.kw {
+      color: #007020;
+      font-weight: bold;
+    }
+
+    /* Keyword */
+    code span.op {
+      color: #666666;
+    }
+
+    /* Operator */
+    code span.ot {
+      color: #007020;
+    }
+
+    /* Other */
+    code span.pp {
+      color: #bc7a00;
+    }
+
+    /* Preprocessor */
+    code span.sc {
+      color: #4070a0;
+    }
+
+    /* SpecialChar */
+    code span.ss {
+      color: #bb6688;
+    }
+
+    /* SpecialString */
+    code span.st {
+      color: #4070a0;
+    }
+
+    /* String */
+    code span.va {
+      color: #19177c;
+    }
+
+    /* Variable */
+    code span.vs {
+      color: #4070a0;
+    }
+
+    /* VerbatimString */
+    code span.wa {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* Warning */
+    .display.math {
+      display: block;
+      text-align: center;
+      margin: 0.5rem auto;
+    }
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+
+<body>
+  <div class="cell markdown">
+    <pre><code>                            Preguntas Teoricas</code></pre>
+  </div>
+  <section id="3-qué-es-una-función-de-flecha" class="cell markdown">
+    <h2><strong><em>3. ¿Qué es una función de flecha?</em></strong></h2>
+  </section>
+  <div class="cell markdown">
+    <p><img src="../html/imgHtml/arrow.png" alt="" /></p>
+    <p>Las <strong>funciones flecha =&gt;</strong> permiten definir de
+      manera <strong>compacta una función convencional</strong>. Si la función
+      tiene solamente una sentencia que devuelve un valor, el uso de funciones
+      flecha nos permite eliminar las llaves y la palabra return. Incluso
+      utilizando parámetros también podemos ver mucho más reducido el
+      código.</p>
+    <p>La sintaxis básica de las funciones flecha o arrow functions sin
+      parámetros es la siguiente:</p>
+    <p><a href="https://youtu.be/VGXASrfvYtc"><strong><em>Funciones
+            "Arrow🏹flecha" :</em></strong> ▶</a></p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb2">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> SINTAXIS Y EJEMPLO</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>() <span class="op">=&gt;</span> { sentencias }</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>const holaMundo <span class="op">=</span> () <span class="op">=&gt;</span> <span class="st">&#39;Hola Mundo&#39;</span><span class="op">;</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <ul>
+      <li>
+        <p>Recordemos que una función es:</p>
+        <ul>
+          <li>La mejor forma de encapsular y compartir lógica.</li>
+          <li>Pueden ser ejecutadas en cualquier momento al llamarlas.</li>
+          <li>Te permite re-utilizar código.</li>
+        </ul>
+      </li>
+    </ul>
+    <p>Las funciones en Javascript son “objetos de primera clase”, es decir,
+      son objetos que pueden ser manipulados y transmitidos igual que
+      cualquier otro objeto en tu programa.</p>
+    <p><strong>Toda función es un objeto Function.</strong> Una función
+      siempre retorna un valor utilizando return, si no se declara un return
+      la función retornará undefined.</p>
+    <p>Una función clásica es aquella que creamos utilizando la palabra
+      function</p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb3">
+      <pre class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>function holaMundo() {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>	<span class="cf">return</span> <span class="st">&#39;Hola Mundo&#39;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>Pero esta puede ser re-escrita en forma de expresión</p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb4">
+      <pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>const holaMundo <span class="op">=</span> function() {</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>	<span class="cf">return</span> <span class="st">&#39;Hola mundo&#39;</span><span class="op">;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>Lo que nos lleva al ejemplo inicial, una arrow function es una
+      expresión, una forma simplificada de escribir nuestra función ya
+      que:</p>
+    <ul>
+      <li>Puede ser escrita en una línea de código (si es lo suficientemente
+        simple).</li>
+      <li>No necesitas escribir la palabra clave function.</li>
+      <li>No necesitas escribir return.</li>
+      <li>No necesitas escribir las llaves</li>
+    </ul>
+    <h2 id="las-arrow-functions-son-anónimas">Las arrow functions son
+      anónimas.</h2>
+    <p>En Javascript existe el concepto de <em>función anónima</em>, el
+      concepto viene nuevamente de la programación funcional en donde también
+      son conocidas como: <em>function literal, lambda function o lambda
+        expresión</em>. Es básicamente una función que no está <em>“atada”</em>
+      a un identificador. Usualmente son utilizadas como argumentos para otras
+      funciones (higher-order functions).</p>
+    <p>En los ejemplos anteriores pudimos ver el uso de estas funciones
+      anónimas, sobre todo en las funciones callback de los métodos de
+      array.</p>
+    <p><strong>Todas las arrow functions son anónimas</strong>. Es posible
+      asociar una función anónima a una variable -<em>que no es lo mismo que
+        nombrar la función</em>- esto nos permite crear cierta capacidad de
+      inferir el nombre de la función al que puedes acceder mediante la
+      propiedad name.</p>
+    <h2 id="cómo-escribir-y-usar-una-arrow-function">¿Cómo escribir y usar
+      una arrow function?</h2>
+    <p>Hay varias formas de escribir una arrow function, estas son
+      básicamente variables de una expresión que permite simplificar la
+      sentencia para diferentes casos de uso.</p>
+    <ul>
+      <li><strong>No necesitas usar paréntesis</strong>.</li>
+      <li>Puedes no escribir paréntesis alrededor de los parámetros de una
+        función, <strong>pero solo cuando tienes un parámetro</strong>.</li>
+    </ul>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb5">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>const holaMundo <span class="op">=</span> name <span class="op">=&gt;</span> `Hola ${name}`</span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>En este caso, para ofrecer una sintaxis concisa, puedes no escribir
+      los paréntesis alrededor de name, o dejarlos si gustas.</p>
+    <p>Ahora, si necesitas definir un parámetro por defecto, entonces debes
+      forzosamente utilizar los paréntesis.</p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb6">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>const holaMundo <span class="op">=</span> (name <span class="op">=</span> <span class="st">&quot;Matias&quot;</span>) <span class="op">=&gt;</span> `Hola ${name}`</span></code></pre>
+    </div>
+  </div>
+  <section id="retorno-implícito" class="cell markdown">
+    <h3>Retorno implícito</h3>
+    <p>Algo que ya hemos visto en los ejemplos anteriores es el retorno
+      implícito, una arrow function tiene la capacidad de retornar
+      inmediatamente cuando el cuerpo de la función es sólo una expresión
+      permitiéndote así mantener todo en una sola línea</p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb7">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>const adultUsers <span class="op">=</span> users.<span class="bu">filter</span>(user <span class="op">=&gt;</span> user.age <span class="op">&gt;</span> <span class="dv">18</span>).<span class="bu">map</span>(user <span class="op">=&gt;</span> user.name)</span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>En el ejemplo podemos ver el uso del retorno implícito (junto con
+      métodos de array y concatenación de estos).</p>
+    <p>Asumiendo que tenemos un array de users que al menos tienen los
+      atributos age y name queremos obtener todos los nombres de los usuarios
+      mayores de 18 años, para eso usamos filter y map en conjunto.</p>
+    <p>Podemos ver el retorno implícito en cada llamada a la función
+      “callback” recibida por filter y map.</p>
+    <p>Sin retorno implícito el ejemplo se vería:</p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb8">
+      <pre class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>const adultUsers <span class="op">=</span> users.<span class="bu">filter</span>(user <span class="op">=&gt;</span> {</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>	<span class="cf">return</span> user.age <span class="op">&gt;</span> <span class="dv">18</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>}).<span class="bu">map</span>(user <span class="op">=&gt;</span> {</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>	<span class="cf">return</span> user.name</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>})</span></code></pre>
+    </div>
+  </div>
+  <section id="sintaxis-con-un-parámetro" class="cell markdown">
+    <h2>Sintaxis con un parámetro</h2>
+    <p>En caso de utilizar un solo parámetro, podemos obviar los paréntesis
+      que rodean al parámetro. Como ejemplo, una función que calcule el
+      cuadrado de un número:</p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb9">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> expresion de funcion </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>var cuadradoEs5 <span class="op">=</span> function(x) {</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x <span class="op">*</span> x<span class="op">;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> console.log(cuadradoEs5(<span class="dv">3</span>))<span class="op">;</span> <span class="op">//</span> <span class="dv">9</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="op">//</span>  Arrow funcion</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>const cuadradoEs6 <span class="op">=</span> (x) <span class="op">=&gt;</span> { <span class="cf">return</span> x <span class="op">*</span> x }<span class="op">;</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>console.log(cuadradoEs6(<span class="dv">3</span>))<span class="op">;</span> <span class="op">//</span> <span class="dv">9</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>En caso de no utilizar ningún parámetro, tendremos que escribir
+      igualmente los paréntesis. Como ejemplo, una función que haga un
+      alert:</p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb10">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> expresion de funcion </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>var holaEs5 <span class="op">=</span> function() {</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    alert(<span class="st">&#39;Hola&#39;</span>)<span class="op">;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="op">//</span>  Arrow funcion</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>const holaEs6 <span class="op">=</span> () <span class="op">=&gt;</span> { alert(<span class="st">&#39;Hola&#39;</span>)<span class="op">;</span> }<span class="op">;</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>holaEs6()<span class="op">;</span></span></code></pre>
+    </div>
+  </div>
+  <section id="sintaxis-de-expresión-literal" class="cell markdown">
+    <h2>Sintaxis de expresión literal</h2>
+    <p>Las funciones flecha también pueden devolver un objeto en su forma de
+      expresión literal. Los objetos se definen entre llaves, algo que
+      entraría en conflicto con la definición de las funciones flecha. Es por
+      ello que para devolver un literal tendremos que rodear a la función de
+      paréntesis. Es decir, que además de las llaves, tendremos que colocar un
+      paréntesis de apertura y otro de cierre. Como ejemplo, esta función que
+      transforma dos parámetros en un objeto:</p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb11">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>var agregarIdEs5 <span class="op">=</span> function(<span class="bu">id</span>, nombre) {</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">id</span>: <span class="bu">id</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>        nombre: nombre</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> ARROW </span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>const agregarIdEs6 <span class="op">=</span> (<span class="bu">id</span>, nombre) <span class="op">=&gt;</span> ({ <span class="bu">id</span>: <span class="bu">id</span>, nombre: nombre })<span class="op">;</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>console.log(agregarIdEs6(<span class="dv">1</span>, <span class="st">&quot;Edu&quot;</span>))<span class="op">;</span> <span class="op">//</span> Object {<span class="bu">id</span>: <span class="dv">1</span>, nombre: <span class="st">&quot;Edu&quot;</span>}</span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>Manipulación de Arrays Un caso de uso muy extendido de las Funciones
+      Flecha es la manipulación de arrays. En este ejemplo vamos a definir un
+      array de automóviles con su nombre y su precio. Seguidamente, crearemos
+      una función para extraer los precios de todos los automóviles</p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb12">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>const automoviles <span class="op">=</span> [</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    { name:<span class="st">&#39;Renault Megane&#39;</span>, precio:<span class="dv">16000</span> },</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    { name:<span class="st">&#39;Toyota Corolla&#39;</span>, precio:<span class="dv">17000</span> },</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    { name:<span class="st">&#39;Honda Civic&#39;</span>, precio:<span class="dv">18000</span> }</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>]<span class="op">;</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>const precios <span class="op">=</span> automoviles.<span class="bu">map</span>(automovil <span class="op">=&gt;</span> automovil.precio)<span class="op">;</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>console.log(precios)<span class="op">;</span> <span class="op">//</span> [<span class="dv">16000</span>, <span class="dv">17000</span>, <span class="dv">18000</span>]</span></code></pre>
+    </div>
+  </div>
+  <section id="consideraciones-acerca-de-las-funciones-flecha" class="cell markdown">
+    <h2>Consideraciones acerca de las Funciones Flecha</h2>
+    <p>Las Funciones Flecha, al igual que todo, tienen sus ventajas e
+      inconvenientes. En este apartado veremos cuáles son.</p>
+    <p>Para empezar, la sintaxis de las funciones puede resultar más confusa
+      para cierto número de personas e incluso hacer que éste sea más difícil
+      de leer, al ser menos natural. Al menos, esto es lo que opinan algunas
+      personas, pero lo cierto es que hay más desarrolladores a favor de su
+      uso que en contra.</p>
+    <p>Para que no odies las Funciones Flecha por múltiples errores que
+      podrías pensar erradamente que son fallos, hay diversas cosas que debes
+      tener en cuenta:</p>
+    <ul>
+      <li><strong>This:</strong> La palabra this funciona de un modo diferente
+        en las Funciones Flecha. <strong>El valor de this no puede ser
+          modificado dentro de la función</strong> y, aunque lo intentes,
+        comprobarás que su valor es el mismo que aquel con el que se ha llamado
+        a la función. Los métodos call, apply y bind, tampoco alterarán su
+        valor.<br />
+      </li>
+      <li><strong>Constructores:</strong> Las funciones flecha <strong>no
+          pueden ser utilizadas como constructores del mismo modo que el resto de
+          funciones</strong>. Si utilizas la palabra reservada new con una Función
+        Flecha, obtendrás un error. Estas funciones no tienen una propiedad
+        prototype u otros métodos internos. Los constructores se usan
+        habitualmente para clear objetos de una clase, así que lo mejor es que
+        utilices las clases que también se han incorporado en ES6.</li>
+      <li><strong>Generadores:</strong> Las funciones flecha no pueden ser
+        utilizadas como generadores, que son las funciones definidas con la
+        sintaxis function*.</li>
+      <li><strong>Argumentos:</strong> Las Funciones Flecha <strong>no
+          disponen de una variable interna definida como arguments</strong> como
+        sí tienen otras funciones. La variable arguments es un array que nos
+        permite obtener los argumentos de una función, algo útil en caso de que
+        una función tenga un número indeterminado de argumentos. Recuerda que
+        esta funcionalidad no está disponible en las Funciones Flecha.</li>
+    </ul>
+  </section>
+  <div class="cell markdown">
+    <p><a href="https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Functions/Arrow_functions">Saber
+        Más: 🧠</a></p>
+  </div>
+  <div class="cell markdown">
+    <pre><code>                                                        EJERCICIOS</code></pre>
+  </div>
+  <div class="cell markdown">
+    <ul>
+      <li>
+        <p>Ejercicio 1:<br />
+          <strong>Crea una función de flecha que tome un número como argumento y
+            devuelva su cuadrado.</strong>
+        </p>
+      </li>
+      <li>
+        <p>Ejercicio 2:<br />
+          <strong>Crea una función de flecha que tome dos números como argumentos
+            y devuelva su suma.</strong>
+        </p>
+      </li>
+      <li>
+        <p>Ejercicio 3:<br />
+          <strong>Crea una función de flecha que no tome ningún argumento y
+            devuelva un número aleatorio entre 0 y 1.</strong>
+        </p>
+      </li>
+      <li>
+        <p>Ejercicio 4:<br />
+          <strong>Crea una función de flecha que tome una cadena como argumento y
+            devuelva la cadena en mayúsculas.</strong>
+        </p>
+      </li>
+      <li>
+        <p>Ejercicio 5:<br />
+          <strong>Crea una función de flecha que tome un array de números como
+            argumento y devuelva el array ordenado de menor a
+            mayor.</strong>
+        </p>
+      </li>
+    </ul>
+  </div>
+  <div class="cell markdown">
+    <p>👍 <a href="../Ejercicios/ej3.js" target="_blank">Soluciones :</a></p>
+  </div>
+</body>
+
+</html>

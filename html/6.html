@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>¿Qué es la programación orientada a objetos?</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+
+      p,
+      h2,
+      h3 {
+        orphans: 3;
+        widows: 3;
+      }
+
+      h2,
+      h3,
+      h4 {
+        page-break-after: avoid;
+      }
+    }
+
+    p {
+      margin: 1em 0;
+    }
+
+    a {
+      color: #1a1a1a;
+    }
+
+    a:visited {
+      color: #1a1a1a;
+    }
+
+    img {
+      max-width: 100%;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      margin-top: 1.4em;
+    }
+
+    h5,
+    h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+
+    h6 {
+      font-weight: normal;
+    }
+
+    ol,
+    ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+
+    li>ol,
+    li>ul {
+      margin-top: 0;
+    }
+
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+
+    .sourceCode {
+      background-color: transparent;
+      overflow: visible;
+    }
+
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+
+    table caption {
+      margin-bottom: 0.75em;
+    }
+
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+
+    #TOC li {
+      list-style: none;
+    }
+
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+
+    #TOC>ul {
+      padding-left: 0;
+    }
+
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+
+    code {
+      white-space: pre-wrap;
+    }
+
+    span.smallcaps {
+      font-variant: small-caps;
+    }
+
+    div.columns {
+      display: flex;
+      gap: min(4vw, 1.5em);
+    }
+
+    div.column {
+      flex: auto;
+      overflow-x: auto;
+    }
+
+    div.hanging-indent {
+      margin-left: 1.5em;
+      text-indent: -1.5em;
+    }
+
+    ul.task-list {
+      list-style: none;
+    }
+
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+
+    pre>code.sourceCode {
+      white-space: pre;
+      position: relative;
+    }
+
+    pre>code.sourceCode>span {
+      display: inline-block;
+      line-height: 1.25;
+    }
+
+    pre>code.sourceCode>span:empty {
+      height: 1.2em;
+    }
+
+    .sourceCode {
+      overflow: visible;
+    }
+
+    code.sourceCode>span {
+      color: inherit;
+      text-decoration: inherit;
+    }
+
+    div.sourceCode {
+      margin: 1em 0;
+    }
+
+    pre.sourceCode {
+      margin: 0;
+    }
+
+    @media screen {
+      div.sourceCode {
+        overflow: auto;
+      }
+    }
+
+    @media print {
+      pre>code.sourceCode {
+        white-space: pre-wrap;
+      }
+
+      pre>code.sourceCode>span {
+        text-indent: -5em;
+        padding-left: 5em;
+      }
+    }
+
+    pre.numberSource code {
+      counter-reset: source-line 0;
+    }
+
+    pre.numberSource code>span {
+      position: relative;
+      left: -4em;
+      counter-increment: source-line;
+    }
+
+    pre.numberSource code>span>a:first-child::before {
+      content: counter(source-line);
+      position: relative;
+      left: -1em;
+      text-align: right;
+      vertical-align: baseline;
+      border: none;
+      display: inline-block;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      padding: 0 4px;
+      width: 4em;
+      color: #aaaaaa;
+    }
+
+    pre.numberSource {
+      margin-left: 3em;
+      border-left: 1px solid #aaaaaa;
+      padding-left: 4px;
+    }
+
+    div.sourceCode {}
+
+    @media screen {
+      pre>code.sourceCode>span>a:first-child::before {
+        text-decoration: underline;
+      }
+    }
+
+    code span.al {
+      color: #ff0000;
+      font-weight: bold;
+    }
+
+    /* Alert */
+    code span.an {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* Annotation */
+    code span.at {
+      color: #7d9029;
+    }
+
+    /* Attribute */
+    code span.bn {
+      color: #40a070;
+    }
+
+    /* BaseN */
+    code span.bu {
+      color: #008000;
+    }
+
+    /* BuiltIn */
+    code span.cf {
+      color: #007020;
+      font-weight: bold;
+    }
+
+    /* ControlFlow */
+    code span.ch {
+      color: #4070a0;
+    }
+
+    /* Char */
+    code span.cn {
+      color: #880000;
+    }
+
+    /* Constant */
+    code span.co {
+      color: #60a0b0;
+      font-style: italic;
+    }
+
+    /* Comment */
+    code span.cv {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* CommentVar */
+    code span.do {
+      color: #ba2121;
+      font-style: italic;
+    }
+
+    /* Documentation */
+    code span.dt {
+      color: #902000;
+    }
+
+    /* DataType */
+    code span.dv {
+      color: #40a070;
+    }
+
+    /* DecVal */
+    code span.er {
+      color: #ff0000;
+      font-weight: bold;
+    }
+
+    /* Error */
+    code span.ex {}
+
+    /* Extension */
+    code span.fl {
+      color: #40a070;
+    }
+
+    /* Float */
+    code span.fu {
+      color: #06287e;
+    }
+
+    /* Function */
+    code span.im {
+      color: #008000;
+      font-weight: bold;
+    }
+
+    /* Import */
+    code span.in {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* Information */
+    code span.kw {
+      color: #007020;
+      font-weight: bold;
+    }
+
+    /* Keyword */
+    code span.op {
+      color: #666666;
+    }
+
+    /* Operator */
+    code span.ot {
+      color: #007020;
+    }
+
+    /* Other */
+    code span.pp {
+      color: #bc7a00;
+    }
+
+    /* Preprocessor */
+    code span.sc {
+      color: #4070a0;
+    }
+
+    /* SpecialChar */
+    code span.ss {
+      color: #bb6688;
+    }
+
+    /* SpecialString */
+    code span.st {
+      color: #4070a0;
+    }
+
+    /* String */
+    code span.va {
+      color: #19177c;
+    }
+
+    /* Variable */
+    code span.vs {
+      color: #4070a0;
+    }
+
+    /* VerbatimString */
+    code span.wa {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* Warning */
+    .display.math {
+      display: block;
+      text-align: center;
+      margin: 0.5rem auto;
+    }
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+
+<body>
+  <div class="cell markdown">
+    <pre><code>                            Preguntas Teoricas</code></pre>
+  </div>
+  <section id="6-qué-es-la-programación-orientada-a-objetos-p-o-o" class="cell markdown">
+    <h2><strong><em>6. ¿Qué es la programación orientada a
+          objetos?</em></strong> P O O</h2>
+    <p><img src="../html/imgHtml/poo.jpg" alt="" /></p>
+  </section>
+  <div class="cell markdown">
+    <p><a href="https://youtu.be/tTPeP5dVuA4">POO ▶</a></p>
+  </div>
+  <div class="cell markdown">
+    <p>La <strong>Programación Orientada a Objetos (POO, o en inglés
+        OOP)</strong> es un estilo de programación muy utilizado, <strong>donde
+        creas y utilizas estructuras de datos de una forma muy similar a la vida
+        real</strong>, lo que facilita considerablemente la forma de planificar
+      y preparar el código de tus programas o aplicaciones.</p>
+    <p>Una de las partes más complejas cuando estás empezando en el mundo de
+      la programación (o incluso cuando ya llevas tiempo) es a la hora de
+      crear las estructuras de datos.</p>
+    <p>Con ejemplos sencillos, esto no es un problema, sin embargo, cuando
+      los ejercicios se complican, una buena elección de una estructura de
+      datos adecuada puede simplificar mucho el ejercicio, o complicarlo
+      demasiado</p>
+    <h4 id="problemas-comunes">Problemas comunes</h4>
+    <p>Cuando comenzamos a programar, nuestros ejemplos son bastante
+      sencillos y faciles de controlar y modificar. Sin embargo, a medida que
+      tenemos que programar cosas más complejas, todo se vuelve más complicado
+      de organizar. Uno de los problemas más faciles de observar, es que
+      comenzamos a tener una gran cantidad de variables y funciones, que al
+      estar inconexas en nuestro código, es fácil que al seguir añadiendo más
+      variables y funciones, nuestro código se descontrole y se vuelva muy
+      difícil de entender.</p>
+    <p>Por esa razón, <strong>necesitamos una forma de organizar</strong>
+      las variables y constantes, las funciones y tenerlo todo bien agrupado,
+      de modo que con el tiempo, sea sencillo de entender, modificar y
+      ampliar. Esa agrupación, en programación, se denomina
+      <strong>Clase</strong>.
+    </p>
+    <h4 id="orientación-a-objetos">Orientación a objetos</h4>
+    <p>El concepto de orientación a objetos se ve muy claro cuando tenemos
+      en nuestra mente el concepto de Clase. Todos los elementos relacionados
+      con esa Clase los vamos a incluir en su interior. Por un lado, las
+      variables y constantes que teníamos «sueltas» en nuestro programa, las
+      agruparemos dentro de una clase, donde también incluiremos todas las
+      funciones.</p>
+  </div>
+  <div class="cell markdown">
+    <blockquote>
+      <p>🎯 <em>Las <strong>variables y constantes incluidas en una clase se
+            denominan propiedades</strong>, y se utilizan para guardar información
+          relacionada (se suele denominar estado). Por otro lado, <strong>las
+            funciones incluidas en una clase se denominan métodos</strong> y se
+          utilizan para realizar una acción relacionada con la clase.</em></p>
+    </blockquote>
+  </div>
+  <section id="sintaxis-básica-de-class" class="cell markdown">
+    <h4>Sintaxis básica de <code>class</code></h4>
+    <pre><code>class MyClass {
+
+  // métodos de clase
+
+  constructor() { ... }
+
+  method1() { ... }
+  method2() { ... }
+  method3() { ... }
+  ...
+  
+}</code></pre>
+    <p>Entonces usamos new MyClass() para crear un objeto nuevo con todos
+      los métodos listados.</p>
+    <p>El método constructor() es llamado automáticamente por new, así
+      podemos inicializar el objeto allí.</p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb3">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> User {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  constructor(name) {</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    this.name <span class="op">=</span> name<span class="op">;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  sayHi() {</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    alert(this.name)<span class="op">;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> Uso:</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>let user <span class="op">=</span> new User(<span class="st">&quot;John&quot;</span>)<span class="op">;</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>user.sayHi()<span class="op">;</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>Cuando se llama a</p>
+    <pre><code>new User(&quot;John&quot;)</code></pre>
+    <p><em>Un objeto nuevo es creado.</em></p>
+    <p>El <em>constructor</em> se ejecuta con el argumento dado y lo
+      <em>asigna a this.name.</em>
+    </p>
+    <p>…Entonces podemos <em>llamar a sus métodos</em>, como</p>
+    <pre><code>user.sayHi()</code></pre>
+    <p>👁 <em>No va una coma entre métodos de clase</em></p>
+    <p>Un tropiezo común en desarrolladores principiantes es poner una coma
+      entre los métodos de clase, lo que resulta en un error de sintaxis.</p>
+  </div>
+  <div class="cell markdown">
+    <p>Piensa, por ejemplo,</p>
+    <p><em>En el protagonista (héroe) de un juego. Tiene una serie de
+        variables relacionadas con él (vidas, fuerza, energía, etc...), pero
+        también tiene una serie de funciones relacionadas con él (hablar,
+        disparar, curar, etc...). Todas ellas, las podríamos agrupar en una
+        clase porque tienen relación con ese concepto de personaje:</em></p>
+    <p>Personaje</p>
+    <ul>
+      <li><em>Vidas restantes</em> <em>(propiedad)</em><br />
+        → Número de vidas que le quedan al personaje</li>
+      <li><em>Fuerza</em> <em>(propiedad)</em><br />
+        → Número que representa la fuerza del personaje</li>
+      <li><em>Energía</em> <em>(propiedad)</em><br />
+        → Número que representa la energía de la vida actual</li>
+      <li><em>Velocidad</em> <em>(propiedad)</em><br />
+        → Número que representa la velocidad actual del personaje</li>
+      <li><em>Hablar</em> <em>(método)</em><br />
+        → Función que hará que el personaje diga algo</li>
+      <li><em>Disparar</em> <em>(método)</em><br />
+        → Función que hará que el personaje dispare con su arma</li>
+      <li><em>Curar</em> <em>(método)</em><br />
+        → Función que hará que el personaje use un botiquín</li>
+    </ul>
+    <p>Sin embargo, el concepto de Clase es un concepto abstracto. En el
+      juego, por ejemplo, podríamos tener dos héroes que podemos elegir al
+      principio. Ambos héroes tienen los mismos atributos y funciones, pero
+      son dos personajes diferentes. Por esa razón, en la programación
+      orientada a objetos se tiene un concepto llamado Clase y otro concepto
+      llamado Objeto</p>
+    <p><img src="../html/imgHtml/clase.png" alt="" /></p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb6">
+      <pre class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Personaje {</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    constructor(vidas, fuerza, energia, velocidad) {</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>      this.vidasRestantes <span class="op">=</span> vidas<span class="op">;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>      this.fuerza <span class="op">=</span> fuerza<span class="op">;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>      this.energia <span class="op">=</span> energia<span class="op">;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>      this.velocidad <span class="op">=</span> velocidad<span class="op">;</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    hablar(frase) {</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>      console.log(`[${this.constructor.name}] dice: <span class="st">&quot;$</span><span class="sc">{frase}</span><span class="st">&quot;</span>`)<span class="op">;</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    disparar() {</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (this.energia <span class="op">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        this.energia <span class="op">-=</span> <span class="dv">10</span><span class="op">;</span> <span class="op">//</span> Reducir la energía al disparar</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        console.log(</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>          `[${this.constructor.name}] ¡Pew pew<span class="op">!</span> Energía restante: ${this.energia}`</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        )<span class="op">;</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> {</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>        console.log(</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>          `[${this.constructor.name}] No hay suficiente energía para disparar.`</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>        )<span class="op">;</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    curar() {</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (this.vidasRestantes <span class="op">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>        this.vidasRestantes <span class="op">+=</span> <span class="dv">1</span><span class="op">;</span> <span class="op">//</span> Incrementar las vidas restantes al curar</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>        console.log(</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>          `[${this.constructor.name}] ha sido curado. Vidas restantes: ${this.vidasRestantes}`</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>        )<span class="op">;</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> {</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>        console.log(</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>          `[${this.constructor.name}] No se puede curar, ya no quedan vidas.`</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>        )<span class="op">;</span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>  <span class="op">//</span> Ejemplo de uso:</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>  const miPersonaje <span class="op">=</span> new Personaje(<span class="dv">3</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">20</span>)<span class="op">;</span></span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>  miPersonaje.hablar(<span class="st">&quot;¡Hola!&quot;</span>)<span class="op">;</span></span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>  miPersonaje.disparar()<span class="op">;</span></span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>  miPersonaje.curar()<span class="op">;</span></span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>  <span class="op">//</span> [Personaje] dice: <span class="st">&quot;¡Hola!&quot;</span></span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>  <span class="op">//</span> [Personaje] ¡Pew pew<span class="op">!</span> Energía restante: <span class="dv">90</span></span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>  <span class="op">//</span> [Personaje] ha sido curado. Vidas restantes: <span class="dv">4</span></span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>  </span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>El primero de ellos, la Clase se refiere al concepto abstracto de
+      personaje, mientras que el segundo de ellos, el objeto se refiere a un
+      elemento particular. Por ejemplo, la clase podría ser Personaje,
+      mientras que los objetos serían Mario y Luigi, ya que ambos se basan en
+      un Personaje, pero tienen sus detalles particulares (Mario podría tener
+      más vida, o Luigi más energía, diferentes velocidades, etc...).</p>
+    <h4 id="similitud-con-la-vida-real">Similitud con la vida real</h4>
+    <p>Además de proveernos una forma de agrupar y organizar nuestro código
+      y crear nuevos elementos basados en ellas sin repetirnos, las clases nos
+      ofrecen una forma similar a la vida real de crear estructuras de datos,
+      que de otra forma podría ser mucho más complejo.</p>
+    <p>Si por ejemplo, necesitaramos añadir una variable que indique la
+      velocidad que tiene el personaje, podríamos añadir una propiedad
+      denominada velocidad que contenga un 5. Luego, podríamos incluir un
+      método denominado correr que cambie esa propiedad velocidad a 10, y un
+      método denominado caminar que la vuelva a cambiar a 5.</p>
+    <p>Como ves, se trata de una forma que se asemeja bastante al mundo
+      real, y puede ser mucho más sencillo para nosotros crear estructuras de
+      datos para nuestros programas porque sólo tenemos que pensar en el
+      elemento en la vida real, e imitarlo al programarlo.</p>
+    <p>Todo esto puede complicarse bastante, pero una vez sentadas estas
+      bases, ya podemos comenzar a ver un poco de código para entender como
+      funciona la Programación orientada a objetos en Javascript.</p>
+  </div>
+  <section id="los-cuatros-pilares-de-la-programación-orientada-a-objetos" class="cell markdown">
+    <h3>Los cuatros pilares de la Programación Orientada a Objetos</h3>
+    <p><img src="../html/imgHtml/4p.png" alt="" /></p>
+    <p>La programación orientada a objetos se basa en los siguientes
+      principios o pilares que la sostienen:</p>
+    <h4 id="encapsulación">Encapsulación.</h4>
+    <p>Este principio establece que toda la información importante está
+      contenida dentro de un objeto y sólo se expone información selecta. La
+      implementación y el estado de cada objeto se mantienen en privado dentro
+      de una clase definida. Otros objetos no tienen acceso a esta clase ni
+      autoridad para realizar cambios. Sólo pueden llamar a una lista de
+      funciones o métodos públicos. Esta característica de la ocultación de
+      datos proporciona una mayor seguridad al programa y evita la corrupción
+      involuntaria de datos.</p>
+    <h4 id="abstracción">Abstracción.</h4>
+    <p>Los objetos sólo revelan los mecanismos internos que son relevantes
+      para el uso de otros objetos, ocultando cualquier código de
+      implementación innecesario. La clase derivada puede ver ampliada su
+      funcionalidad. Este concepto puede ayudar a los desarrolladores a
+      realizar más fácilmente cambios o adiciones adicionales a lo largo del
+      tiempo.</p>
+    <h4 id="herencia">Herencia.</h4>
+    <p>Las clases pueden reutilizar código de otras clases. Se pueden
+      asignar relaciones y subclases entre objetos, lo que permite a los
+      desarrolladores reutilizar la lógica común sin dejar de mantener una
+      jerarquía única. Esta propiedad de la programación orientada a objetos
+      obliga a un análisis más exhaustivo de los datos, reduce el tiempo de
+      desarrollo y garantiza un mayor nivel de precisión.</p>
+    <h4 id="polimorfismo">Polimorfismo.</h4>
+    <p>Los objetos están diseñados para compartir comportamientos y pueden
+      adoptar más de una forma. El programa determinará qué significado o uso
+      es necesario para cada ejecución de ese objeto a partir de una clase
+      padre, lo que reduce la necesidad de duplicar código. A continuación, se
+      crea una clase hija, que amplía la funcionalidad de la clase padre. El
+      polimorfismo permite que distintos tipos de objetos pasen por la misma
+      interfaz.</p>
+  </section>
+  <div class="cell markdown">
+    <p><a href="https://www.w3schools.com/js/js_objects.asp">Saber Más:
+        🧠</a></p>
+  </div>
+  <div class="cell markdown">
+    <pre><code>                                                        EJERCICIOS</code></pre>
+  </div>
+  <div class="cell markdown">
+    <ul>
+      <li>
+        <p>Ejercicio 1:<br />
+          <strong>Crear una clase Persona en JavaScript con un objeto maria que
+            tiene niña y edad como atributos y jugar y comer como
+            métodos:</strong>
+        </p>
+      </li>
+      <li>
+        <p>Ejercicio 2:<br />
+          <strong>Crea una Subclase; Extiende la clase Persona y crea una clase
+            Niño que incluya información sobre el sexo de la
+            persona.</strong>
+        </p>
+      </li>
+      <li>
+        <p>Ejercicio 3:<br />
+          <strong>Llama a los metodos del ejercicio 1 y observe el
+            comportamiento</strong>
+        </p>
+      </li>
+    </ul>
+  </div>
+  <div class="cell markdown">
+    <p>Algo más dificil ✏ Acepta el ✔ <a href="https://youtu.be/t_2PI3fHp_I">Reto ▶</a></p>
+  </div>
+  <div class="cell markdown">
+    <p>👍 <a href="../Ejercicios/ej6.js" target="_blank">Soluciones :</a></p>
+  </div>
+</body>
+
+</html>

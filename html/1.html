@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>¿Qué tipo de bucles hay en JS?</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+
+      p,
+      h2,
+      h3 {
+        orphans: 3;
+        widows: 3;
+      }
+
+      h2,
+      h3,
+      h4 {
+        page-break-after: avoid;
+      }
+    }
+
+    p {
+      margin: 1em 0;
+    }
+
+    a {
+      color: #1a1a1a;
+    }
+
+    a:visited {
+      color: #1a1a1a;
+    }
+
+    img {
+      max-width: 100%;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      margin-top: 1.4em;
+    }
+
+    h5,
+    h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+
+    h6 {
+      font-weight: normal;
+    }
+
+    ol,
+    ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+
+    li>ol,
+    li>ul {
+      margin-top: 0;
+    }
+
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+
+    .sourceCode {
+      background-color: transparent;
+      overflow: visible;
+    }
+
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+
+    table caption {
+      margin-bottom: 0.75em;
+    }
+
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+
+    #TOC li {
+      list-style: none;
+    }
+
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+
+    #TOC>ul {
+      padding-left: 0;
+    }
+
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+
+    code {
+      white-space: pre-wrap;
+    }
+
+    span.smallcaps {
+      font-variant: small-caps;
+    }
+
+    div.columns {
+      display: flex;
+      gap: min(4vw, 1.5em);
+    }
+
+    div.column {
+      flex: auto;
+      overflow-x: auto;
+    }
+
+    div.hanging-indent {
+      margin-left: 1.5em;
+      text-indent: -1.5em;
+    }
+
+    ul.task-list {
+      list-style: none;
+    }
+
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+
+    pre>code.sourceCode {
+      white-space: pre;
+      position: relative;
+    }
+
+    pre>code.sourceCode>span {
+      display: inline-block;
+      line-height: 1.25;
+    }
+
+    pre>code.sourceCode>span:empty {
+      height: 1.2em;
+    }
+
+    .sourceCode {
+      overflow: visible;
+    }
+
+    code.sourceCode>span {
+      color: inherit;
+      text-decoration: inherit;
+    }
+
+    div.sourceCode {
+      margin: 1em 0;
+    }
+
+    pre.sourceCode {
+      margin: 0;
+    }
+
+    @media screen {
+      div.sourceCode {
+        overflow: auto;
+      }
+    }
+
+    @media print {
+      pre>code.sourceCode {
+        white-space: pre-wrap;
+      }
+
+      pre>code.sourceCode>span {
+        text-indent: -5em;
+        padding-left: 5em;
+      }
+    }
+
+    pre.numberSource code {
+      counter-reset: source-line 0;
+    }
+
+    pre.numberSource code>span {
+      position: relative;
+      left: -4em;
+      counter-increment: source-line;
+    }
+
+    pre.numberSource code>span>a:first-child::before {
+      content: counter(source-line);
+      position: relative;
+      left: -1em;
+      text-align: right;
+      vertical-align: baseline;
+      border: none;
+      display: inline-block;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      padding: 0 4px;
+      width: 4em;
+      color: #aaaaaa;
+    }
+
+    pre.numberSource {
+      margin-left: 3em;
+      border-left: 1px solid #aaaaaa;
+      padding-left: 4px;
+    }
+
+    div.sourceCode {}
+
+    @media screen {
+      pre>code.sourceCode>span>a:first-child::before {
+        text-decoration: underline;
+      }
+    }
+
+    code span.al {
+      color: #ff0000;
+      font-weight: bold;
+    }
+
+    /* Alert */
+    code span.an {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* Annotation */
+    code span.at {
+      color: #7d9029;
+    }
+
+    /* Attribute */
+    code span.bn {
+      color: #40a070;
+    }
+
+    /* BaseN */
+    code span.bu {
+      color: #008000;
+    }
+
+    /* BuiltIn */
+    code span.cf {
+      color: #007020;
+      font-weight: bold;
+    }
+
+    /* ControlFlow */
+    code span.ch {
+      color: #4070a0;
+    }
+
+    /* Char */
+    code span.cn {
+      color: #880000;
+    }
+
+    /* Constant */
+    code span.co {
+      color: #60a0b0;
+      font-style: italic;
+    }
+
+    /* Comment */
+    code span.cv {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* CommentVar */
+    code span.do {
+      color: #ba2121;
+      font-style: italic;
+    }
+
+    /* Documentation */
+    code span.dt {
+      color: #902000;
+    }
+
+    /* DataType */
+    code span.dv {
+      color: #40a070;
+    }
+
+    /* DecVal */
+    code span.er {
+      color: #ff0000;
+      font-weight: bold;
+    }
+
+    /* Error */
+    code span.ex {}
+
+    /* Extension */
+    code span.fl {
+      color: #40a070;
+    }
+
+    /* Float */
+    code span.fu {
+      color: #06287e;
+    }
+
+    /* Function */
+    code span.im {
+      color: #008000;
+      font-weight: bold;
+    }
+
+    /* Import */
+    code span.in {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* Information */
+    code span.kw {
+      color: #007020;
+      font-weight: bold;
+    }
+
+    /* Keyword */
+    code span.op {
+      color: #666666;
+    }
+
+    /* Operator */
+    code span.ot {
+      color: #007020;
+    }
+
+    /* Other */
+    code span.pp {
+      color: #bc7a00;
+    }
+
+    /* Preprocessor */
+    code span.sc {
+      color: #4070a0;
+    }
+
+    /* SpecialChar */
+    code span.ss {
+      color: #bb6688;
+    }
+
+    /* SpecialString */
+    code span.st {
+      color: #4070a0;
+    }
+
+    /* String */
+    code span.va {
+      color: #19177c;
+    }
+
+    /* Variable */
+    code span.vs {
+      color: #4070a0;
+    }
+
+    /* VerbatimString */
+    code span.wa {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* Warning */
+    .display.math {
+      display: block;
+      text-align: center;
+      margin: 0.5rem auto;
+    }
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+
+<body>
+  <div class="cell markdown">
+    <pre><code>                                                        Preguntas Teoricas</code></pre>
+  </div>
+  <div class="cell markdown">
+    <h2 id="1-qué-tipo-de-bucles-hay-en-js"><strong><em>1. ¿Qué tipo de
+          bucles hay en JS?</em></strong></h2>
+    <p><a href="https://youtu.be/o3zyhG3rrmk">Bucles : ▶</a></p>
+    <p>Una de las principales ventajas de la programación es la posibilidad
+      de crear bucles y repeticiones para tareas específicas, y que no
+      tengamos que realizar el mismo código varias veces de forma manual.</p>
+    <p>Los bucles nos permiten simplificar nuestro código, que sea más fácil
+      de leer e incluso más fácil de modificar y mantener.</p>
+    <p><img src="../html/imgHtml/image-2.png" alt="" /></p>
+    <h1 id="condición">Condición</h1>
+    <p>Al igual que en los condicionales <strong>if</strong>, en los bucles
+      se va a <strong>evaluar una condición</strong> para saber si se debe
+      seguir repetiendo el bucle o se debe finalizar. Habitualmente, lo que se
+      suele hacer es establecer que si la condición <strong>es
+        verdadera</strong>, se vuelve a repetir el bucle. Por el contrario, si
+      es falsa, se finaliza. Sin embargo, esta condición puede variar
+      dependiendo de la implementación que le indique el programador.</p>
+    <h1 id="iterar">Iterar</h1>
+    <p>Otro concepto que usaremos mucho dentro de un bucle es el concepto de
+      <strong>Iteración</strong>. Esto se refiere a <strong>cada una de las
+        repeticiones de un bucle</strong>. Por ejemplo, si un bucle se repite
+      como en el gráfico inferior de este artículo (de 0 a 3*), se dice que
+      hay 4 iteraciones.
+    </p>
+    <p><img src="../html/imgHtml/image.png" alt="" /></p>
+    <p>🎯 <strong><em>Mucho cuidado con los bucles, porque en programación
+          se suele empezar a contar en 0, por lo que esa es la primera iteración.
+          Si el bucle va desde 0 a 3, hay 4 iteraciones.</em></strong></p>
+    <h1 id="contador">Contador</h1>
+    <p>Muchas veces, los bucles que creamos incorporan un contador, que no
+      es más que algo que irá guardando un número para <strong>contar el
+        número de repeticiones realizadas</strong>, y así
+      <strong>finalizar</strong> cuando se llegue a otro <strong>número
+        concreto</strong>. Dicho contador hay que inicializarlo (crearlo y darle
+      un valor) antes de comenzar el bucle.
+    </p>
+    <h1 id="incrementodecremento">Incremento/Decremento</h1>
+    <p>Al igual que tenemos un contador en un bucle, también debemos tener
+      una parte donde hagamos un <strong>incremento (o un decremento) de dicho
+        contador</strong>. <strong>Si no</strong> lo tuvieramos, el contador
+      <em>no cambiaría</em> y la condición <strong>siempre sería
+        veradera</strong>, por lo que sería imposible salir del
+      bucle.(<strong>Bucle Infinito</strong>)
+    </p>
+    <p>🎯 <strong><em>Ten en cuenta que de producirse un bucle infinto,
+          nuestro programa se quedará atascado y tendremos que forzar para
+          finalizarlo. Ten siempre cuidado al crear un bucle para que no sea
+          infinito.</em></strong></p>
+    <p>Un buen hábito de programación cuando creamos bucles es pensar la
+      forma de hacer que esos bucles siempre vayan desde un número inicial a
+      un número final y terminen las repeticiones. De esta forma son
+      predecibles y fáciles de leer. Sin embargo, en algunas ocasiones nos
+      puede interesar hacer interrupciones o saltos de iteraciones para
+      conseguir algo más específico que con un bucle íntegro es más complejo
+      de conseguir.</p>
+    <h1 id="saltar-una-iteración-continue">Saltar una iteración
+      <strong>continue</strong>
+    </h1>
+    <p>Imagina un caso donde queremos saltarnos una iteración concreta. Por
+      ejemplo, queremos hacer un bucle que muestre los números del 0 al 10,
+      pero queremos que el número 5 se lo salte y no lo muestre, continuando
+      con el resto.</p>
+    <p>Para eso podemos hacer uso de continue, que es una sentencia que al
+      llegar a ella dentro de un bucle, el programa salta y abandona esa
+      iteración, volviendo al principio del bucle:</p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb2">
+      <pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (let i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">11</span><span class="op">;</span> i<span class="op">++</span>) {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (i <span class="op">==</span> <span class="dv">5</span>) {</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>      <span class="cf">continue</span><span class="op">;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    console.log(<span class="st">&quot;Valor de i:&quot;</span>, i)<span class="op">;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre>
+    </div>
+  </div>
+  <section id="interrumpir-el-bucle-break" class="cell markdown">
+    <h1>Interrumpir el bucle <strong>break</strong></h1>
+    <p>De la misma forma que tenemos un continue que interrumpe la iteración
+      y vuelve al inicio a evaluar la condición, tenemos un break que nos
+      permite interrumpir el bucle y abandonarlo. Esto puede ser bastante útil
+      cuando queremos que se abandone el bucle por una condición especial.</p>
+    <p>Por ejemplo, cambiemos el continue del ejemplo anterior por el
+      break:</p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb3">
+      <pre class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (let i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">11</span><span class="op">;</span> i<span class="op">++</span>) {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (i <span class="op">==</span> <span class="dv">5</span>) {</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>      <span class="cf">break</span><span class="op">;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    console.log(<span class="st">&quot;Valor de i:&quot;</span>, i)<span class="op">;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <blockquote>
+      <p><em>No obstante, recuerda que estas interrupciones sólo deben usarse
+          en casos muy específicos. Siempre es preferible que el bucle sea
+          predecible y no tenga demasiadas situaciones excepcionales que
+          interrumpan el flujo, ya que a la larga son difíciles de modificar y
+          mantener.</em></p>
+    </blockquote>
+  </div>
+  <section id="tipos-de-bucles" class="cell markdown">
+    <h1>Tipos de bucles</h1>
+    <p>Existen muchas formas de realizar bucles, vamos a ver los más
+      basicos, que son muy similares en otros lenguajes de programación:</p>
+    <p>Los tres primeros son los bucles por excelencia en la
+      programación.</p>
+  </section>
+  <div class="cell markdown">
+    <table>
+      <colgroup>
+        <col style="width: 42%" />
+        <col style="width: 57%" />
+      </colgroup>
+      <thead>
+        <tr class="header">
+          <th style="text-align: center;"><strong><em>Tipo de
+                bucle</em></strong></th>
+          <th style="text-align: center;"><strong><em>Descripción</em></strong></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="odd">
+          <td style="text-align: center;"><em>while</em></td>
+          <td style="text-align: center;">Bucles simples.</td>
+        </tr>
+        <tr class="even">
+          <td style="text-align: center;"><img src="../html/imgHtml/image-2.png" alt="" /></td>
+          <td style="text-align: center;">:--------------------------------------------------------:</td>
+        </tr>
+        <tr class="odd">
+          <td style="text-align: center;"><em>for</em></td>
+          <td style="text-align: center;">Bucles clásicos por excelencia.</td>
+        </tr>
+        <tr class="even">
+          <td style="text-align: center;"><img src="../html/imgHtml/image-3.png" alt="image-3.png" /></td>
+          <td style="text-align: center;"></td>
+        </tr>
+        <tr class="odd">
+          <td style="text-align: center;"><em>do..while</em></td>
+          <td style="text-align: center;">Bucles simples que se realizan siempre
+            como mínimo una vez.</td>
+        </tr>
+        <tr class="even">
+          <td style="text-align: center;"><img src="../html/imgHtml/image-4.png" alt="" /></td>
+          <td style="text-align: center;">:--------------------------------------------------------:</td>
+        </tr>
+        <tr class="odd">
+          <td style="text-align: center;"><em>for..in</em></td>
+          <td style="text-align: center;">Bucles sobre posiciones de un
+            array.</td>
+        </tr>
+        <tr class="even">
+          <td style="text-align: center;"><img src="../html/imgHtml/image-5.png" alt="" /></td>
+          <td style="text-align: center;">:--------------------------------------------------------:</td>
+        </tr>
+        <tr class="odd">
+          <td style="text-align: center;"><em>for..of</em></td>
+          <td style="text-align: center;">Bucles sobre elementos de un array.</td>
+        </tr>
+        <tr class="even">
+          <td style="text-align: center;"><img src="../html/imgHtml/image.png" alt="image.png" /></td>
+          <td style="text-align: center;">:--------------------------------------------------------:</td>
+        </tr>
+        <tr class="odd">
+          <td style="text-align: center;"><em>forEach</em></td>
+          <td style="text-align: center;">Bucles específicos sobre arrays.</td>
+        </tr>
+        <tr class="even">
+          <td style="text-align: center;"><img src="../html/imgHtml/image-6.png" alt="" /></td>
+          <td style="text-align: center;">:--------------------------------------------------------:</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <section id="while" class="cell markdown">
+    <h1>while</h1>
+    <p>El bucle <strong>WHILE</strong> es una estructura de control que
+      <strong>repite</strong> un bloque de código mientras una condición se
+      evalúe como <strong>verdadera</strong>.
+    </p>
+    <p>En lenguaje natural, el bucle WHILE significa,</p>
+    <p><strong><em>Mientras se cumpla esto -&gt; haz esto</em></strong></p>
+    <p>En cada iteración, se verifica la condición:</p>
+    <ul>
+      <li>Si es <em>true</em>, se ejecuta el bloque de código</li>
+      <li>Si es <em>false</em>, el bucle se detiene y el programa continúa con
+        la siguiente instrucción después del bucle</li>
+    </ul>
+    <p>Si la condición se evalúa como falsa desde el principio, el bloque de
+      código no se ejecutará en absoluto.</p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb4">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span>(condicion)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Bloque de código a ejecutar mientras la condición sea verdadera</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> resto de código</span></code></pre>
+    </div>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb5">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>let i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>  <span class="op">//</span> Inicialización de la variable contador</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> Condición: Mientras la variable contador sea menor de <span class="dv">5</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> (i <span class="op">&lt;</span> <span class="dv">5</span>) {</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  console.log(<span class="st">&quot;Valor de i:&quot;</span>, i)<span class="op">;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  i<span class="op">++</span> <span class="op">//</span>(i <span class="op">=</span> i <span class="op">+</span> <span class="dv">1</span><span class="op">;</span> Incrementamos el valor de i)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> Valor de i: <span class="dv">0</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> Valor de i: <span class="dv">1</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> Valor de i: <span class="dv">2</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> Valor de i: <span class="dv">3</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> Valor de i: <span class="dv">4</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>En este ejemplo:</p>
+    <p>El bucle WHILE se ejecuta mientras la variable contador sea menor que
+      5. En cada iteración realizaríamos una acción, que podría emplear el
+      valor de contador.</p>
+    <p>Después de cada iteración, se incrementa el contador en 1. Si no
+      hiciéramos esto, la condición nunca se cumpliría, y caeríamos en un
+      bucle infinito.</p>
+    <p><strong><em>La operación i = i + 1 es lo que se suele llamar un
+          incremento de una variable. Es muy común simplificarla como i++, que
+          hace exactamente lo mismo: aumenta en 1 su valor.</em></strong></p>
+  </div>
+  <section id="dowhile" class="cell markdown">
+    <h1>do..while</h1>
+    <p>El bucle <strong>do..while</strong> es una estructura de control que
+      repite un bloque de código al menos una vez, y luego verifica una
+      condición para decidir si continuar o salir del bucle.</p>
+    <p>En lenguaje natural, el bucle WHILE significa,</p>
+    <p><strong><em>Haz esto -&gt; mientras se cumpla esto</em></strong></p>
+    <p>El bucle <em>do..while</em> es el “hermano” del bucle <em>while</em>,
+      y su funcionamiento es muy parecido.</p>
+    <p>La diferencia es que en el bucle do..while la condición se verifica
+      después de ejecutar el cuerpo del bucle. Por tanto, el bucle se ejecuta
+      al menos una vez.</p>
+    <p><strong>El bloque de código se ejecuta primero y luego se verifica la
+        condición</strong>. Si la condición se evalúa como <em>verdadera</em>,
+      el bucle se repite y el bloque de código se ejecuta nuevamente. Si la
+      condición se evalúa como <em>falsa, el bucle se detiene</em> y el
+      programa continúa con la siguiente instrucción después del bucle.</p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb6">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>do</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> Bloque de código a ejecutar mientras la condición sea verdadera</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span>(condicion)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> resto de código</span></code></pre>
+    </div>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb7">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>let i <span class="op">=</span> <span class="dv">5</span><span class="op">;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>do {</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  console.log(<span class="st">&quot;Hola a todos&quot;</span>)<span class="op">;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  i<span class="op">++;</span> <span class="op">//</span> i <span class="op">=</span> i <span class="op">+</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>} <span class="cf">while</span> (i <span class="op">&lt;</span> <span class="dv">5</span>)<span class="op">;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>console.log(<span class="st">&quot;Bucle finalizado&quot;</span>)<span class="op">;</span></span></code></pre>
+    </div>
+  </div>
+  <section id="while--or--dowhile--esa-es-la-cuestión" class="cell markdown">
+    <h1><strong>while</strong> 🤔 or 💭 <strong>do..while</strong> ....
+      <strong><em>Esa es la cuestión</em></strong>
+    </h1>
+    <p><strong><em>Este suele ser interesante cuando queremos establecer un
+          bucle pero queremos que siempre se realice una vez, independientemente
+          de SI cumple o NO la condición</em></strong></p>
+  </section>
+  <div class="cell markdown">
+    <p>Por ejemplo,</p>
+    <p>Imagina que tienes una función que calculaCosas(), y devuelve un
+      resultado. Si el resultado cumple una condición, por ejemplo es menor
+      que 10, debes volver a calcularlo.</p>
+    <p>Digamos algo así: <em>mientras el resultado sea menor de 10
+        calcula...</em></p>
+    <p>Eso con un bucle WHILE queda así:</p>
+    <pre><code>resultado = calcularCosas()
+while(resultado &lt; 10)
+{
+    resultado = calcularCosas()
+}
+
+// resto de código
+</code></pre>
+    <p>Como vemos, la instrucción que tengo encima del WHILE es igual a la
+      que tengo en el cuerpo del bucle. Esta situación “huele a DO-WHILE”</p>
+    <p>Efectivamente, si cambias el bucle por un DO-WHILE, queda así, que es
+      más conciso y limpito:</p>
+    <p>Digamos algo así: <em>haz que calcule mientras el resultado sea menor
+        de 10</em></p>
+    <pre><code>do
+{
+    resultado = calcularCosas()
+}
+while(resultado &lt; 10)
+
+// resto de código</code></pre>
+  </div>
+  <section id="for" class="cell markdown">
+    <h1>for</h1>
+    <p>El bucle <strong>for</strong> es una estructura de control que
+      permite <strong>repetir un bloque de código un número específico de
+        veces</strong>. Es una de las estructuras de control más utilizadas y
+      poderosas.</p>
+    <p>Ya hemos visto los bucles WHILE y DO-WHILE, que son los bucles más
+      básicos.</p>
+    <p>A medida que se usaban los bucles, ocurría con mucha frecuencia que
+      se tenía la necesidad de hacer algo N veces (100, 1.000, 1.000.000). Sin
+      depender de una condición, simplemente</p>
+  </section>
+  <div class="cell markdown">
+    <p><strong>Quiero hacer esto 100 veces...</strong></p>
+    <p>Eso se podía hacer con un bucle WHILE de forma sencilla, claro
+      pero...</p>
+    <p>Por ejemplo, si quisiera hacer una acción 100 veces podríamos usar un
+      contador y hacer:</p>
+    <pre><code>contador = 0
+
+while(contador &lt; 100)
+{
+    // hacer algo
+    contador += 1;
+}</code></pre>
+    <p>Pero esta estructura se repetía tanto, tanto, que “eh, y si.....</p>
+    <p>¿si hacemos algo para que sea más sencillo?“. Y así surge el bucle
+      FOR.</p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb11">
+      <pre class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(inicializacion<span class="op">;</span> condition<span class="op">;</span> incremento)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>	<span class="op">//</span> hacer algo</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>En este bucle FOR, tal cuál está definido en muchos lenguajes, consta
+      de tres partes.</p>
+    <ul>
+      <li>
+        <p><strong><em>inicialización</em></strong>; una sentencia que se
+          ejecuta antes de entrar en el bucle<br />
+          <strong><em>creamos una variable temporal llamada
+              i</em></strong>
+        </p>
+      </li>
+      <li>
+        <p><strong><em>condition</em></strong>; sentencia que se evalúa para
+          continuar el bucle<br />
+          <strong><em>realizamos el bucle mientras i &lt;
+              100</em></strong>
+        </p>
+      </li>
+      <li>
+        <p><strong><em>incremento</em></strong> sentencia que se ejecuta en
+          cada iteración del bucle<br />
+          <strong><em>incrementamos i con i++</em></strong>
+        </p>
+      </li>
+    </ul>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb12">
+      <pre class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (let i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">100</span><span class="op">;</span> i<span class="op">++</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> hacer algo </span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <blockquote>
+      <p><em>En principio, el programador debería realizar el bucle con el que
+          más cómodo se sienta, tanto un WHILE como un FOR. Sin embargo, es más
+          común encontrarse con bucles for en el día a día, por lo que se
+          recomienda no dejar de utilizar el for simplemente por un rechazo
+          inicial debido a que su sintaxis pueda parecer más compleja.</em></p>
+    </blockquote>
+  </div>
+  <section id="for--of" class="cell markdown">
+    <h1>for ... of</h1>
+    <p>Los bucles <strong>for in</strong> y <strong>for of</strong> en
+      JavaScript son dos modos de escribir el bucle for en este lenguaje de
+      programación. Este <strong>tipo de bucle</strong> es muy común en el
+      desarrollo web y normalmente se utiliza para <strong>recorrer los
+        distintos elementos de un array</strong>.</p>
+    <p>El bucle <strong>for of</strong> nos facilita la escritura de nuestro
+      bucle al <em>tener un contador interno</em>. Esto hace que se reduzcan
+      los elementos que debemos definir dentro de nuestro bucle. Entonces, el
+      bucle for of está compuesto por <strong>dos elementos:</strong>:<br />
+      Una <strong>variable temporal</strong> en la que tenemos el valor actual
+      dentro del loop y un <strong>array a recorrer</strong>. La variable
+      temporal es una forma de almacenar el valor de cada ciclo del loop.</p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb13">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>let elementos <span class="op">=</span> [<span class="st">&quot;Agua&quot;</span>,<span class="st">&quot;Tierra&quot;</span>,<span class="st">&quot;Fuego&quot;</span>,<span class="st">&quot;Aire&quot;</span>]<span class="op">;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (elemento of elementos){</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>console.log(elemento)<span class="op">;</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="op">//</span>Imprime los valores Agua, Tierra, Fuego y Aire</span></code></pre>
+    </div>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb14">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> <span class="cf">for</span> of</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>let languagesArray <span class="op">=</span> [</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Spanish&quot;</span>,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Euskera&quot;</span>,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;English&quot;</span>,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Italian&quot;</span>,</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;German&quot;</span>,</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;French&quot;</span>,</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Maths&quot;</span>,</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>]<span class="op">;</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (let Language of languagesArray) {</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>  console.log(`Language <span class="kw">is</span> ${Language}`)<span class="op">;</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> salida</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="op">/*</span> Language <span class="kw">is</span> Spanish</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>Language <span class="kw">is</span> Euskera</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>Language <span class="kw">is</span> English</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>Language <span class="kw">is</span> Italian</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>Language <span class="kw">is</span> German</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>Language <span class="kw">is</span> French</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>Language <span class="kw">is</span> Maths</span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a> <span class="op">*/</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <blockquote>
+      <p><em>Como el bucle tiene un contador interno, no tenemos ningún
+          control sobre el índice de los elementos. haciendo que todos sean
+          visibles en el orden en el que los hayamos escrito en el array.</em></p>
+    </blockquote>
+  </div>
+  <section id="for--in" class="cell markdown">
+    <h1>for ... in</h1>
+    <p>Un bucle <strong>for in</strong> lo constituyen igualmente
+      <strong>dos elementos</strong>: un <strong>índice temporal
+        actual</strong> dentro del loop y un <strong>array a recorrer</strong>,
+      que llamamos con su nombre. Estos dos elementos los separa la palabra
+      clave in. A continuación, te presentamos cómo se escribiría:
+    </p>
+    <p>Este tipo de for, usado de forma "simple" solo va a imprimir los
+      índices del array que se le asigne.</p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb15">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>let elementos <span class="op">=</span> [<span class="st">&quot;Agua&quot;</span>,<span class="st">&quot;Tierra&quot;</span>,<span class="st">&quot;Fuego&quot;</span>,<span class="st">&quot;Aire&quot;</span>]<span class="op">;</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (elemento <span class="kw">in</span> elementos){</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>console.log(elemento)<span class="op">;</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="op">//</span>Imprime los índices <span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>Aunque se puede jugar con los datos dentro de este ciclo para
+      imprimir los valores que contenga el array y no sus índices.</p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb16">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>let elementos <span class="op">=</span> [<span class="st">&quot;Agua&quot;</span>,<span class="st">&quot;Tierra&quot;</span>,<span class="st">&quot;Fuego&quot;</span>,<span class="st">&quot;Aire&quot;</span>]<span class="op">;</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (elemento <span class="kw">in</span> elementos){</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>console.log(elementos[elemento])<span class="op">;</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="op">//</span>Imprime los valores Agua, Tierra, Fuego y Aire</span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <blockquote>
+      <p>Es muy parecido a hacer algo como elementos [ i ] en un for loop
+        normal</p>
+    </blockquote>
+    <pre><code>console.log (elemento [i]);</code></pre>
+    <p>En nuestro ejemplo....</p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb18">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>let languagesArray <span class="op">=</span> [</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Spanish&quot;</span>,</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Euskera&quot;</span>,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;English&quot;</span>,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Italian&quot;</span>,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;German&quot;</span>,</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;French&quot;</span>,</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Maths&quot;</span>,</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>]<span class="op">;</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (let index <span class="kw">in</span> languagesArray) {</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  let language <span class="op">=</span> languagesArray[index]<span class="op">;</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>  console.log(`Language <span class="kw">in</span> position ${index} <span class="kw">is</span> ${language}`)<span class="op">;</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> salida</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a><span class="op">/*</span> Language <span class="kw">in</span> position <span class="dv">0</span> <span class="kw">is</span> Spanish</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>Language <span class="kw">in</span> position <span class="dv">1</span> <span class="kw">is</span> Euskera</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>Language <span class="kw">in</span> position <span class="dv">2</span> <span class="kw">is</span> English</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>Language <span class="kw">in</span> position <span class="dv">3</span> <span class="kw">is</span> Italian</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>Language <span class="kw">in</span> position <span class="dv">4</span> <span class="kw">is</span> German</span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>Language <span class="kw">in</span> position <span class="dv">5</span> <span class="kw">is</span> French</span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>Language <span class="kw">in</span> position <span class="dv">6</span> <span class="kw">is</span> Maths <span class="op">*/</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <blockquote>
+      <h4
+        id="si-se-fijan-la-sentencia-for--in-muestra-el-indice-y-la-propiedad-en-sí-y-la-sentencia-for--of-muestra-los-valores-de-una-colección">
+        Si
+        se fijan la sentencia for … in muestra el indice y la propiedad en sí, y
+        la sentencia for … of muestra los valores de una colección.</h4>
+      <p><strong><em><a href="https://youtu.be/FJy8xgEdkNc">for..in Vs
+              for..of</a></em></strong></p>
+    </blockquote>
+  </div>
+  <section id="foreach" class="cell markdown">
+    <h1>forEach</h1>
+    <p>Este método entra dentro del grupo de Iterables sin devolver una
+      nueva matriz, lo que hace el <strong>forEach</strong> es ejecutar una
+      función por cada elemento del array. En cada iteración se tendrá acceso
+      a 3 variables: <strong>valor</strong> (del elemento),
+      <strong>índice</strong> (del elemento) y <strong>array</strong> (que
+      estamos recorriendo) y con ello la función que se ejecutará para cada
+      elemento de una matriz.
+    </p>
+    <p>Este método es muy útil cuando solo necesitamos ejecutar una función
+      a través de cada elemento del array, sin necesidad de obtener un
+      retorno. El forEach() también se puede utilizar en mapas y
+      conjuntos.</p>
+    <blockquote>
+      <p><strong><em>También denominado:<br />
+            forEach()método</em></strong></p>
+    </blockquote>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb19">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="op">//</span>  forEach()método es:</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>array.forEach(function callback(valor, posicion, arrayUsado) {      </span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">//</span>instrucciones a ejecutar</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb20">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>let students <span class="op">=</span> [<span class="st">&#39;John&#39;</span>, <span class="st">&#39;Sara&#39;</span>, <span class="st">&#39;Jack&#39;</span>]<span class="op">;</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> using forEach</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>students.forEach(myFunction)<span class="op">;</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>function myFunction(item) {</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    console.log(item)<span class="op">;</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> salida</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="op">/*</span> John</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>   Sara</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>   Jack <span class="op">*/</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <blockquote>
+      <p>el <em>forEach()</em> <em>método</em> toma <em>myFunction()</em> una
+        función que muestra cada elemento de estudiantes Es bastante sencillo
+        actualizar los elementos de la matriz si los necesitamos</p>
+    </blockquote>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb21">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>let students <span class="op">=</span> [<span class="st">&#39;John&#39;</span>, <span class="st">&#39;Sara&#39;</span>, <span class="st">&#39;Jack&#39;</span>]<span class="op">;</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> using forEach</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>students.forEach(myFunction)<span class="op">;</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>function myFunction(item, index, arr) {</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">//</span> adding strings to the array elements</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    arr[index] <span class="op">=</span> <span class="st">&#39;Hello &#39;</span> <span class="op">+</span> item<span class="op">;</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>console.log(students)<span class="op">;</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> salida</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> [<span class="st">&quot;Hola John&quot;</span>, <span class="st">&quot;Hola Sara&quot;</span>, <span class="st">&quot;Hola Jack&quot;</span>]</span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <h4 id="pero-quién-es-más-rápido-qué-opción-es-la-más-aconsejable">¿Pero
+      quién es más rápido? ¿Qué opción es la más aconsejable?</h4>
+    <h4 id="for-ó-foreach"><strong><em>for</em></strong> ó
+      <strong><em>forEach</em></strong>
+    </h4>
+    <p>Si tenemos que comparar en términos de rendimiento ambos bucles, la
+      cosa se pone un poco complicada. La razón de fondo es que la mayoría de
+      los navegadores modernos incluyen métodos que detectan ambos y optimizan
+      el resultado. Sin embargo, es posible hacernos una idea de quién es el
+      <em>“pistolero más rápido al oeste del río JavaScript”</em> enumerando
+      paso a paso los pasos que realiza cada ciclo for y foreach:
+    </p>
+    <ul>
+      <li>
+        <p>Pasos a realizar por el ciclo <strong><em>for</em></strong>:</p>
+        <ul>
+          <li>
+            <ol>
+              <li>Establecer el valor inicial de la variable de control</li>
+            </ol>
+          </li>
+          <li>
+            <ol>
+              <li>Comprobar si se debe o no salir del ciclo</li>
+            </ol>
+          </li>
+          <li>
+            <ol>
+              <li>Ejecutar el cuerpo del ciclo</li>
+            </ol>
+          </li>
+          <li>
+            <ol>
+              <li>Incrementar la variable de control<br />
+                <em>↺ Volver al paso 2</em>
+              </li>
+            </ol>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <p>Mientras <strong><em>forEach</em></strong>:</p>
+        <ul>
+          <li>
+            <ol>
+              <li>Instanciar la función de llamada del ciclo</li>
+            </ol>
+          </li>
+          <li>
+            <ol>
+              <li>Comprobar si hay un siguiente elemento a procesar</li>
+            </ol>
+          </li>
+          <li>
+            <ol>
+              <li>Llamar a la función nuevamente para el siguiente elemento a
+                procesar, con un nuevo contexto de ejecución (esto comprende el
+                “alcance” de la función; por lo tanto, su contexto, argumentos,
+                variables internas y referencias a cualquier variable externa — si se
+                utilizan).</li>
+            </ol>
+          </li>
+          <li>
+            <ol>
+              <li>Ejecutar el contenido de la función</li>
+            </ol>
+          </li>
+          <li>
+            <ol>
+              <li>Finalización de la llamada a la función<br />
+                <em>↺ Volver al paso 2</em>
+              </li>
+            </ol>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <p><em>Podemos deducir que un bucle </em>for* es mucho más rápido en
+      tiempo de ejecución que un bucle <em>forEach</em>. Pero hay que tener en
+      cuenta que un bucle forEach imprime sólo aquellas posiciones de un array
+      que contengan información omitiendo posiciones vacías. Esto hace que un
+      array complejo forEach se muestre más eficaz a la hora de manejar
+      nuestro código a cambio de sacrificar rendimiento.*</p>
+    <p>En términos prácticos, si comparamos el <em>for</em> con el
+      <em>forEach</em>, podemos ver además que es más cómodo y limpio usar el
+      forEach, ya que sólo invocamos el método foreach también especificamos
+      una función de devolución, donde va a estar iterando y devolviendo cada
+      uno de los elementos y cuando termina, simplemente continúa con la
+      siguiente instrucción.
+    </p>
+  </div>
+  <div class="cell markdown">
+    <p><a href="https://developer.mozilla.org/es/docs/Web/JavaScript/Guide/Loops_and_iteration">🧠
+        Saber Más</a></p>
+  </div>
+  <div class="cell markdown">
+    <pre><code>                                                        EJERCICIOS</code></pre>
+  </div>
+  <div class="cell markdown">
+    <ul>
+      <li>
+        <p><em>Ejercicio 1</em><br />
+          <strong>Usando un bucle for, Imprime los números del 1 al
+            5.</strong>
+        </p>
+      </li>
+      <li>
+        <p><em>Ejercicio 2</em><br />
+          <strong>Usando un bucle while, Imprime los números del 5 al 1 en orden
+            descendente..</strong>
+        </p>
+      </li>
+      <li>
+        <p><em>Ejercicio 3</em><br />
+          <strong>Usando un bucle do...while, Imprime los números pares del 0 al
+            10.</strong>
+        </p>
+      </li>
+      <li>
+        <p><em>Ejercicio 4</em><br />
+          <strong>Crea un objeto llamado "persona" con tres propiedades: "nombre",
+            "edad" y "ciudad". Luego, se utiliza un bucle "for...in" para iterar
+            sobre las propiedades del objeto "persona"</strong>
+        </p>
+      </li>
+      <li>
+        <p><em>Ejercicio 5</em><br />
+          <strong>Escribe un programa que recorra el array frutas que contiene
+            diferentes tipos de frutas como "manzana", "plátano" y "cereza",
+            utilizando un bucle for...of. Para cada fruta en el array, imprime el
+            nombre de la fruta en la consola.</strong>
+        </p>
+      </li>
+      <li>
+        <p><em>Ejercicio 6</em><br />
+          <strong>Con los datos del ejercicio anterior, utilizando el método
+            forEach(). Imprime el índice y el nombre de la fruta en la
+            consola.</strong>
+        </p>
+      </li>
+      <li>
+        <p><em>Ejercicio 7</em><br />
+          <strong>Usando un bucle for, Imprime los números del 1 al 5, pero detén
+            el bucle si el número es 3.</strong>
+        </p>
+      </li>
+      <li>
+        <p><em>Ejercicio 8</em><br />
+          <strong>Usando un bucle while, Imprime los números del 1 al 5, pero
+            omite el número 3.</strong>
+        </p>
+      </li>
+      <li>
+        <p><em>Ejercicio 9</em><br />
+          <strong>Usando un bucle do...while, Imprime los números del 5 al 1 en
+            orden descendente.</strong>
+        </p>
+      </li>
+      <li>
+        <p><em>Ejercicio 10</em><br />
+          <strong>Escribe un programa que recorra el array frutas que contiene
+            diferentes tipos de frutas como "manzana", "plátano" y "cereza",
+            utilizando un bucle for...in. Para cada índice en el array, imprime el
+            valor correspondiente en la consola.</strong>
+        </p>
+      </li>
+    </ul>
+  </div>
+  <div class="cell markdown">
+    <p>👍 <a href="../Ejercicios/ej1.js">Soluciones :</a></p>
+  </div>
+</body>
+
+</html>

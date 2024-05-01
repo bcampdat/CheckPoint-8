@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>¿Cuáles son las diferencias entre const, let y var?</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+
+      p,
+      h2,
+      h3 {
+        orphans: 3;
+        widows: 3;
+      }
+
+      h2,
+      h3,
+      h4 {
+        page-break-after: avoid;
+      }
+    }
+
+    p {
+      margin: 1em 0;
+    }
+
+    a {
+      color: #1a1a1a;
+    }
+
+    a:visited {
+      color: #1a1a1a;
+    }
+
+    img {
+      max-width: 100%;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      margin-top: 1.4em;
+    }
+
+    h5,
+    h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+
+    h6 {
+      font-weight: normal;
+    }
+
+    ol,
+    ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+
+    li>ol,
+    li>ul {
+      margin-top: 0;
+    }
+
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+
+    .sourceCode {
+      background-color: transparent;
+      overflow: visible;
+    }
+
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+
+    table caption {
+      margin-bottom: 0.75em;
+    }
+
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+
+    #TOC li {
+      list-style: none;
+    }
+
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+
+    #TOC>ul {
+      padding-left: 0;
+    }
+
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+
+    code {
+      white-space: pre-wrap;
+    }
+
+    span.smallcaps {
+      font-variant: small-caps;
+    }
+
+    div.columns {
+      display: flex;
+      gap: min(4vw, 1.5em);
+    }
+
+    div.column {
+      flex: auto;
+      overflow-x: auto;
+    }
+
+    div.hanging-indent {
+      margin-left: 1.5em;
+      text-indent: -1.5em;
+    }
+
+    ul.task-list {
+      list-style: none;
+    }
+
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+
+    pre>code.sourceCode {
+      white-space: pre;
+      position: relative;
+    }
+
+    pre>code.sourceCode>span {
+      display: inline-block;
+      line-height: 1.25;
+    }
+
+    pre>code.sourceCode>span:empty {
+      height: 1.2em;
+    }
+
+    .sourceCode {
+      overflow: visible;
+    }
+
+    code.sourceCode>span {
+      color: inherit;
+      text-decoration: inherit;
+    }
+
+    div.sourceCode {
+      margin: 1em 0;
+    }
+
+    pre.sourceCode {
+      margin: 0;
+    }
+
+    @media screen {
+      div.sourceCode {
+        overflow: auto;
+      }
+    }
+
+    @media print {
+      pre>code.sourceCode {
+        white-space: pre-wrap;
+      }
+
+      pre>code.sourceCode>span {
+        text-indent: -5em;
+        padding-left: 5em;
+      }
+    }
+
+    pre.numberSource code {
+      counter-reset: source-line 0;
+    }
+
+    pre.numberSource code>span {
+      position: relative;
+      left: -4em;
+      counter-increment: source-line;
+    }
+
+    pre.numberSource code>span>a:first-child::before {
+      content: counter(source-line);
+      position: relative;
+      left: -1em;
+      text-align: right;
+      vertical-align: baseline;
+      border: none;
+      display: inline-block;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      padding: 0 4px;
+      width: 4em;
+      color: #aaaaaa;
+    }
+
+    pre.numberSource {
+      margin-left: 3em;
+      border-left: 1px solid #aaaaaa;
+      padding-left: 4px;
+    }
+
+    div.sourceCode {}
+
+    @media screen {
+      pre>code.sourceCode>span>a:first-child::before {
+        text-decoration: underline;
+      }
+    }
+
+    code span.al {
+      color: #ff0000;
+      font-weight: bold;
+    }
+
+    /* Alert */
+    code span.an {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* Annotation */
+    code span.at {
+      color: #7d9029;
+    }
+
+    /* Attribute */
+    code span.bn {
+      color: #40a070;
+    }
+
+    /* BaseN */
+    code span.bu {
+      color: #008000;
+    }
+
+    /* BuiltIn */
+    code span.cf {
+      color: #007020;
+      font-weight: bold;
+    }
+
+    /* ControlFlow */
+    code span.ch {
+      color: #4070a0;
+    }
+
+    /* Char */
+    code span.cn {
+      color: #880000;
+    }
+
+    /* Constant */
+    code span.co {
+      color: #60a0b0;
+      font-style: italic;
+    }
+
+    /* Comment */
+    code span.cv {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* CommentVar */
+    code span.do {
+      color: #ba2121;
+      font-style: italic;
+    }
+
+    /* Documentation */
+    code span.dt {
+      color: #902000;
+    }
+
+    /* DataType */
+    code span.dv {
+      color: #40a070;
+    }
+
+    /* DecVal */
+    code span.er {
+      color: #ff0000;
+      font-weight: bold;
+    }
+
+    /* Error */
+    code span.ex {}
+
+    /* Extension */
+    code span.fl {
+      color: #40a070;
+    }
+
+    /* Float */
+    code span.fu {
+      color: #06287e;
+    }
+
+    /* Function */
+    code span.im {
+      color: #008000;
+      font-weight: bold;
+    }
+
+    /* Import */
+    code span.in {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* Information */
+    code span.kw {
+      color: #007020;
+      font-weight: bold;
+    }
+
+    /* Keyword */
+    code span.op {
+      color: #666666;
+    }
+
+    /* Operator */
+    code span.ot {
+      color: #007020;
+    }
+
+    /* Other */
+    code span.pp {
+      color: #bc7a00;
+    }
+
+    /* Preprocessor */
+    code span.sc {
+      color: #4070a0;
+    }
+
+    /* SpecialChar */
+    code span.ss {
+      color: #bb6688;
+    }
+
+    /* SpecialString */
+    code span.st {
+      color: #4070a0;
+    }
+
+    /* String */
+    code span.va {
+      color: #19177c;
+    }
+
+    /* Variable */
+    code span.vs {
+      color: #4070a0;
+    }
+
+    /* VerbatimString */
+    code span.wa {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* Warning */
+    .display.math {
+      display: block;
+      text-align: center;
+      margin: 0.5rem auto;
+    }
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+
+<body>
+  <div class="cell markdown">
+    <pre><code>                            Preguntas Teoricas</code></pre>
+  </div>
+  <section id="2-cuáles-son-las-diferencias-entre-const-let-y-var" class="cell markdown">
+    <h2><strong><em>2. ¿Cuáles son las diferencias entre const, let y
+          var?</em></strong></h2>
+    <h4 id="lo-primero-hemos-de-detenernos-en-que-son-las-variables">Lo
+      primero hemos de detenernos en que son <strong><em>las
+          variables</em></strong></h4>
+    <p><img src="../html/imgHtml/image-22.png" alt="" /> <img
+        src="../html/imgHtml/image-23.png" alt="" /></p>
+    <ul>
+      <li>
+        <p>En términos más específicos, una variable consta de tres
+          elementos principales:</p>
+        <ol>
+          <li><strong>Nombre:</strong> es el identificador único que se utiliza
+            para referirse a la variable.</li>
+          <li><strong>Tipo de dato:</strong> es el tipo de información que se
+            almacena en la variable, como números enteros, decimales, cadenas de
+            texto, booleanos, entre otros.</li>
+          <li><strong>Valor:</strong> es el contenido actual almacenado en la
+            variable.</li>
+        </ol>
+      </li>
+    </ul>
+    <h3 id="tipos-de-variables-en-javascript">Tipos de variables en
+      JavaScript</h3>
+    <ul>
+      <li><strong><em>Número (Number):</em></strong> Almacena valores
+        numéricos, ya sean enteros o decimales.</li>
+      <li><strong><em>Cadena (String):</em></strong> Contiene secuencias de
+        caracteres, como texto.</li>
+      <li><strong><em>Booleano (Boolean):</em></strong> Representa valores
+        verdaderos (true) o falsos (false).</li>
+      <li><strong><em>Nulo (Null):</em></strong> Indica que una variable no
+        tiene valor o está vacía.</li>
+      <li><strong><em>Indefinido (Undefined):</em></strong> Cuando una
+        variable se ha declarado pero no se le ha asignado un valor.</li>
+      <li><strong><em>Arreglo (Array):</em></strong> Almacena una lista
+        ordenada de elementos.</li>
+      <li><strong><em>Objeto (Object):</em></strong> Estructura de datos que
+        puede contener propiedades y métodos.</li>
+      <li><strong><em>Función (Function):</em></strong> Un bloque de código
+        reutilizable que puede ser llamado.</li>
+      <li><strong><em>Símbolo (Symbol):</em></strong> Identificador único
+        utilizado para propiedades de objetos.</li>
+      <li><strong><em>BigInt</em></strong>: Para manejar números enteros
+        grandes.</li>
+    </ul>
+    <h3 id="declaración-y-asignación-de-variables-en-javascript">Declaración
+      y asignación de variables en JavaScript</h3>
+    <pre><code>    var nombre</code></pre>
+    <p>De esta manera, existirá un espacio en memoria que haga referencia a
+      la variable nombre, pero por defecto tendrá un valor <em>undefined</em>.
+      Para <strong>guardar un valor en esa variable</strong>, se utiliza el
+      <strong>símbolo de igual ( = )</strong> , seguido del valor. Esto se
+      denomina <strong>asignación</strong>.
+    </p>
+    <pre><code>var nombre
+nombre = &quot;JavaScript&quot;</code></pre>
+    <p>Se puede declarar y asignar en una misma línea, sin repetir el nombre
+      de la variable. A esto se le dice inicializar una variable.</p>
+    <pre><code>var nombre = &quot;JavaScript&quot;</code></pre>
+    <h3 id="cómo-acceder-a-una-variable">Cómo acceder a una variable</h3>
+    <p>Una vez que hayas declarado y asignado un valor a una variable, ya
+      puedes emplear en tu código usando su nombre, sin la necesidad de
+      escribir nuevamente var.</p>
+    <pre><code>var nombre = &quot;JavaScript&quot;
+console.log(nombre) //&quot;JavaScript&quot;</code></pre>
+    <p><img src="../html/imgHtml/variable.jpg" alt="" /></p>
+  </section>
+  <div class="cell markdown">
+    <p><a href="https://youtu.be/IBM7FCJy_gA"><img src="../html/imgHtml/cajitas.jpg" alt=" " /> <em>play</em> ▶</a></p>
+    <blockquote>
+      <p>🎯 <strong><em>En JavaScript, puede crear 3 tipos de variables:
+            usando declaraciones const, lety var. Cada tipo de variable tiene un
+            comportamiento diferente con respecto a los pasos de declaración,
+            inicialización, acceso al valor y asignación.</em></strong></p>
+    </blockquote>
+  </div>
+  <div class="cell markdown">
+    <p>Para abordar este tema, vamos a ver conceptos como
+      <strong>scope</strong> y <strong>hoisting</strong>, para poder entender
+      las diferencias entre las 3 formas que tenemos de declarar una
+      variable.
+    </p>
+    <p><img src="../html/imgHtml/cuadrado.jpg" alt="" /></p>
+    <h2 id="scope">Scope</h2>
+    <p>El <strong>scope</strong> de una variable hace referencia a su
+      <strong>alcance</strong>, es decir, en que lugar estan éstas disponibles
+      para su uso. Puede ser <em>"global" o "local"</em>.
+    </p>
+    <h3 id="scope-global--">Scope Global -&gt;</h3>
+    <p>Decimos que el <strong>scope es global</strong>, cuando una variable
+      es declarada <strong>fuera de una función</strong> y podemos
+      <strong>acceder</strong> a ella desde <strong>cualquier parte</strong>
+      del archivo.
+    </p>
+    <p>En el ejemplo siguiente podemos ver que tenemos declarada una
+      variable "nombre" por fuera de la función <em>"saludar()"</em>, a la
+      cual le asignamos el valor "Clark Kent", pero si se fijan, <em>podemos
+        acceder a su valor e imprimirlo</em> en consola tanto desde dentro, como
+      desde fuera de <em>"saludar()"</em>.</p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb6">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>var nombre <span class="op">=</span> <span class="st">&quot;Clark Kent&quot;</span><span class="op">;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>function saludar(){</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    var saludo <span class="op">=</span> <span class="st">&quot;Hello &quot;</span> <span class="op">+</span> nombre<span class="op">;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    console.log(saludo)<span class="op">;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>saludar()<span class="op">;</span> <span class="op">//</span> <span class="st">&quot;Hello Clark Kent&quot;</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>console.log(nombre)<span class="op">;</span> <span class="op">//</span> <span class="st">&quot;Clark Kent&quot;</span></span></code></pre>
+    </div>
+  </div>
+  <section id="scope-local--" class="cell markdown">
+    <h3>Scope Local -&gt;</h3>
+    <p>Mientras que nos referimos al <strong>scope local</strong> cuando se
+      trata de una variable declarada <strong>dentro de una función</strong>,
+      por lo que <strong>NO</strong> tenemos <strong>acceso</strong> a ella
+      <strong>desde fuera</strong>.
+    </p>
+    <p>A diferencia del ejemplo anterior, en éste declaramos la variable
+      "saludo" dentro de la funcion <em>"saludar()"</em> e intentamos acceder
+      a su valor e imprimirlo en consola desde fuera, pero conseguimos un
+      error que nos dice que "saludo" no esta definido. Ésto se debe a que el
+      <strong>scope de "saludo" es local</strong> y solo se puede acceder a su
+      valor desde dentro de la función en la que fue decalarada.
+    </p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb7">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>var nombre <span class="op">=</span> <span class="st">&quot;Clark Kent&quot;</span><span class="op">;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>function saludar(){</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    var saludo <span class="op">=</span> <span class="st">&quot;Hello &quot;</span> <span class="op">+</span> nombre<span class="op">;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    console.log(saludo)<span class="op">;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>saludar()<span class="op">;</span> <span class="op">//</span> <span class="st">&quot;Hello Clark Kent&quot;</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>console.log(saludo)<span class="op">;</span> <span class="op">//</span> <span class="pp">ReferenceError</span>: saludo <span class="kw">is</span> <span class="kw">not</span> defined</span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>Ahora, imaginen que nuestro archivo tiene mil lineas de codigo y
+      tenemos nuestras variables declaradas de manera global con "var". Ésto
+      puede resultar en un problema, ya que podemos perder el control de las
+      mismas y podriamos reasignarles un valor sin querer, obteniendo
+      resultados no deseados. Veamos un ejemplo...</p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb8">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>var nombre <span class="op">=</span> <span class="st">&quot;Clark Kent&quot;</span><span class="op">;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>function saludar(){</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  nombre <span class="op">=</span> <span class="st">&quot;Bruce Wayne&quot;</span><span class="op">;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  var saludo <span class="op">=</span> <span class="st">&quot;Hello &quot;</span> <span class="op">+</span> nombre<span class="op">;</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  console.log(saludo)<span class="op">;</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>saludar()<span class="op">;</span> <span class="op">//</span> <span class="st">&quot;Hello Bruce Wayne&quot;</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>console.log(nombre)<span class="op">;</span> <span class="op">//</span> <span class="st">&quot;Bruce Wayne&quot;</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>Como pudimos ver, nuestra variable global "nombre" que inicialmente
+      tenia el valor de "Clark Kent", <em>fue modificada</em> dentro de la
+      funcion "saludar()" reasignandole el valor "Bruce Wayne".</p>
+    <p>El ejemplo anterior nos lleva a otro punto importante, y es que a las
+      declaraciones "var" se les puede reasignar otro valor e incluso se las
+      puede redeclarar.</p>
+    <p>Cuando una variable es redeclarada y se le asigna un valor diferente
+      al original, podriamos acceder al nuevo valor, siempre y cuando lo
+      hagamos dentro del mismo scope en el que se redeclaró. Veamos...</p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb9">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>var nombre <span class="op">=</span> <span class="st">&quot;Clark Kent&quot;</span><span class="op">;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>function saludar(){</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  var nombre <span class="op">=</span> <span class="st">&quot;Bruce Wayne&quot;</span><span class="op">;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  var saludo <span class="op">=</span> <span class="st">&quot;Hello &quot;</span> <span class="op">+</span> nombre<span class="op">;</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  console.log(saludo)<span class="op">;</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>saludar()<span class="op">;</span> <span class="op">//</span> <span class="st">&quot;Hello Bruce Wayne&quot;</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>console.log(nombre)<span class="op">;</span> <span class="op">//</span> <span class="st">&quot;Clark Kent&quot;</span>S</span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>Observemos que la variable "nombre" se declara en el scope global y
+      se le asigna el valor "Clark Kent", pero dentro de la función
+      "saludar()" la volvemos a declarar y le asignamos un valor diferente, en
+      este caso "Bruce Wayne", sin embargo cuando invocamos la funcion y a su
+      vez queremos imprimir en consola la variable "nombre" podemos ver que
+      los valores son diferentes aunque la variable parezca la misma. Esto se
+      debe a que declaramos dos veces una variable pero en diferentes
+      scopes.</p>
+    <p>Pero ojo con esto, porq si hacemos lo mismo pero dentro de un
+      condicional como el "if" el resultado es otro y podria complicarnos la
+      vida. Miren el siguiente caso</p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb10">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>var nombre <span class="op">=</span> <span class="st">&quot;Clark Kent&quot;</span><span class="op">;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(true){</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    var nombre <span class="op">=</span> <span class="st">&quot;Bruce Wayne&quot;</span><span class="op">;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>console.log(nombre)<span class="op">;</span> <span class="op">//</span> <span class="st">&quot;Bruce Wayne&quot;</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <blockquote>
+      <p>Al redeclarar la variable dentro del "if" y cambiarle su valor, este
+        tambien cambia de manera global, por eso cuando recuperamos la variable
+        fuera del condicional y la imprimimos en consola obtenemos el nuevo
+        valor.</p>
+    </blockquote>
+  </div>
+  <section id="hoisting" class="cell markdown">
+    <h2>Hoisting</h2>
+    <p>El <strong>hoisting</strong> es una característica de JavaScript que
+      permite que las declaraciones de variables y funciones sean elevadas al
+      comienzo del bloque de código en el que se encuentran.</p>
+    <p>Esto significa que, aunque una variable o función pueda estar
+      declarada en un lugar posterior en el código, será tratada como si
+      estuviera al principio del bloque.</p>
+    <p>Esto se podria ver tambien como si javascript moviera las
+      declaraciones a la parte superior del scope, y las inicializara como
+      "undefined", para luego asignarle el valor que definimos, en la linea en
+      donde lo definimos. El siguiente ejemplo funciona tal como esperamos que
+      lo haga, declaramos la funcion nombre y le asignamos un valor el cual
+      podriamos imprimir luego por consola.</p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb11">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>var nombre <span class="op">=</span> <span class="st">&quot;Clark Kent&quot;</span><span class="op">;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>console.log(<span class="st">&quot;Hello &quot;</span> <span class="op">+</span> nombre)<span class="op">;</span> <span class="op">//</span> <span class="st">&quot;Hello Clark Kent&quot;</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>Sin embargo si primero invocaramos el console.log() y luego
+      declararamos la variable, el resultado seria <em>"Hello
+        undefined"</em></p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb12">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>console.log(<span class="st">&quot;Hello &quot;</span> <span class="op">+</span> nombre)<span class="op">;</span> <span class="op">//</span> <span class="st">&quot;Hello undefined&quot;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>var nombre <span class="op">=</span> <span class="st">&quot;Clark Kent&quot;</span><span class="op">;</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>¿Pero por que funciona asi? Justamente porque javascript llevaria la
+      declaración de la variable al inicio del scope asignandole por defecto
+      el valor "undefined", luego invocaria el console.log() y recien ahi
+      reasignaria a la variable "nombre" el valor que nosotros indicamos.
+      Veamos con un ejemplo como funcionaria en el detras de escena...</p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb13">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>var nombre <span class="op">=</span> undefined<span class="op">;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>console.log(<span class="st">&quot;Hello &quot;</span> <span class="op">+</span> nombre)<span class="op">;</span> <span class="op">//</span> <span class="st">&quot;Hello undefined&quot;</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>nombre <span class="op">=</span> <span class="st">&quot;Clark Kent&quot;</span><span class="op">;</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>Ahora que hemos hablado de los conceptos Scope y Hoisting y conocemos
+      su comportamiento vamos a ver que ocurre con <strong>Let</strong> y
+      <strong>Const</strong>
+    </p>
+    <h3 id="scope-de-let">Scope de <strong>"let"</strong></h3>
+    <p>Las variables declaradas con <strong>"let"</strong> funcionan un poco
+      diferente a las declaradas con "var", y es por esto que se recomienda
+      usar esta nomenclatura que nos ofrece "ES6" como una buena práctica.</p>
+    <p>Esto es porque "let" <strong>tiene un scope de bloque</strong>.
+      Basicamente un bloque es <strong>todo</strong> lo que se encuentra
+      <strong>entre llaves "{ }"</strong>, entonces si tomamos como ejemplo el
+      mismo que usamos para "var", en donde declarabamos otra vez la misma
+      variable dentro de un "if" y sobreescribiamos su valor, vamos a
+      encontrarnos con que el funcionamiento cambia un poco y nos salva de
+      cometer errores accidentales. Veamos...
+    </p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb14">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>let nombre <span class="op">=</span> <span class="st">&quot;Clark Kent&quot;</span><span class="op">;</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(true){</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    let nombre <span class="op">=</span> <span class="st">&quot;Bruce Wayne&quot;</span><span class="op">;</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>console.log(nombre)<span class="op">;</span> <span class="op">//</span> <span class="st">&quot;Clark Kent&quot;</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>Como podemos ver en el código de arriba, tenemos 2 variables "nombre"
+      pero en diferentes scopes ya que para <strong>"let"</strong> un bloque
+      es considerado un <strong>scope local</strong> aunque no se trate de una
+      función como tal.</p>
+    <p>Si intentaramos <strong>declarar 2 veces la misma variable con "let"
+        en el mismo scope</strong> obtendriamos un <em>"SyntaxError: Identifier
+        'nombre' has already been declared"</em></p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb15">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>let nombre <span class="op">=</span> <span class="st">&quot;Bruce Wayne&quot;</span><span class="op">;</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>let nombre <span class="op">=</span> <span class="st">&quot;Clark Kent&quot;</span><span class="op">;</span> <span class="op">//</span> <span class="pp">SyntaxError</span>: Identifier <span class="st">&#39;nombre&#39;</span> has already been declared</span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>Sin embargo, si que podriamos declarar una variable con "let" y mas
+      adelante reasignarle otro valor, siempre y cuando se trate del mismo
+      scope.</p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb16">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>let nombre <span class="op">=</span> <span class="st">&quot;Bruce Wayne&quot;</span><span class="op">;</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>nombre <span class="op">=</span> <span class="st">&quot;Clark Kent&quot;</span><span class="op">;</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>console.log(nombre)<span class="op">;</span> <span class="op">//</span> <span class="st">&quot;Clark Kent&quot;</span></span></code></pre>
+    </div>
+  </div>
+  <section id="hoisting-de-let" class="cell markdown">
+    <h3>Hoisting de <strong>"let"</strong></h3>
+    <p>Como sucede con "var", para "let" javascript funciona de la misma
+      manera, <strong>asigna en memoria las declaraciones previamente a su
+        ejecución</strong>, o dicho de otra forma, eleva las declaraciones de
+      las variables o funciones a la parte superior del scope en donde se
+      encuentren. Pero existe una diferencia, y es que al contrario de lo que
+      sucede con "var", javascript <strong>no inicializa por defecto</strong>
+      las variables con <em>"undefined"</em>, por lo tanto si hicieramos
+      referencia a <strong>una variable todavia no inicializada</strong>
+      obtendriamos <strong>un error</strong>.</p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb17">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>console.log(<span class="st">&quot;Hello &quot;</span> <span class="op">+</span> nombre)<span class="op">;</span> <span class="op">//</span> <span class="pp">ReferenceError</span>: Cannot access <span class="st">&#39;nombre&#39;</span> before initialization</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>let nombre <span class="op">=</span> <span class="st">&quot;Clark Kent&quot;</span><span class="op">;</span></span></code></pre>
+    </div>
+  </div>
+  <section id="scope-de-const" class="cell markdown">
+    <h3>Scope de <strong>"const"</strong></h3>
+    <p>Con las variables declaradas con <strong>"const"</strong> pasa algo
+      similar que con "let", son variables que <strong>tiene scope de
+        bloque</strong>, pero la diferencia está en que a éstas <strong>NO se
+        les puede reasignar el valor</strong>. Tienen <strong>valores
+        "constantes"</strong>. <em>Si intentaramos reasignarle el valor a una
+        variable declarada con "const" obtendriamos un error</em>.</p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb18">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>const nombre <span class="op">=</span> <span class="st">&quot;Clark Kent&quot;</span><span class="op">;</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>nombre <span class="op">=</span> <span class="st">&quot;Bruce Wayne&quot;</span><span class="op">;</span> <span class="op">//</span> <span class="pp">TypeError</span>: Assignment to constant variable.</span></code></pre>
+    </div>
+  </div>
+  <section id="hoisting-de-const" class="cell markdown">
+    <h3>Hoisting de <strong>"const"</strong></h3>
+    <p>Al Igual que con "let" las variables declaradas con "const" son
+      asignadas en memoria antes de la ejecución y tampoco son inicializadas.
+      Por lo tanto obtendriamos el mismo error, si quisieramos acceder a su
+      valor previo a inicializaras.</p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb19">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>console.log(<span class="st">&quot;Hello &quot;</span> <span class="op">+</span> nombre)<span class="op">;</span> <span class="op">//</span> <span class="pp">ReferenceError</span>: Cannot access <span class="st">&#39;nombre&#39;</span> before initialization</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>const nombre <span class="op">=</span> <span class="st">&quot;Clark Kent&quot;</span><span class="op">;</span></span></code></pre>
+    </div>
+  </div>
+  <section id="resumen" class="cell markdown">
+    <h1>Resumen</h1>
+    <ul>
+      <li>
+        <p><strong>“var”” es la manera más antigua de declarar variables. No
+            es muy estricta en cuanto al alcance, ya que al declarar variables de
+            esta forma, dichas variables podrán ser accedidas, e incluso
+            modificadas, tanto dentro como fuera de los bloques internos en una
+            función.</strong></p>
+      </li>
+      <li>
+        <p><strong>Con ““let”” por otra parte, el alcance se reduce al
+            bloque (las llaves) en el cual la variable fue declarada. Fuera de este
+            bloque la variable no existe. Una vez declarada la variable con let, no
+            se puede volver a declarar con en ninguna otra parte de la
+            función.</strong></p>
+      </li>
+      <li>
+        <p><strong>““const”” al igual que ““let”” se define en el contexto o
+            alcance de un bloque, a diferencia de let y var, las variables definidas
+            como constantes (const), ya no podrán ser modificadas ni declaradas
+            nuevamente, en ninguna otra parte de la función o el contexto en el que
+            ya existen.</strong></p>
+      </li>
+      <li>
+        <p><strong>La recomendación es reducir siempre al mínimo el alcance
+            de nuestras variables, por lo que se debe usar let en lugar de var
+            mientras sea posible.</strong></p>
+      </li>
+    </ul>
+  </section>
+  <div class="cell markdown">
+    <p><img src="../html/imgHtml/image20.png" alt="image.png" /></p>
+  </div>
+  <div class="cell markdown">
+    <p><a href="https://www.w3schools.com/js/js_variables.asp">Saber Más:
+        🧠</a></p>
+  </div>
+  <div class="cell markdown">
+    <pre><code>                                                        EJERCICIOS</code></pre>
+  </div>
+  <div class="cell markdown">
+    <ul>
+      <li>
+        <p><em>Ejercicio 1</em><br />
+          <strong>Declarar una variable var ("Hola"), let ("Mundo") y const ("!")
+            e imprimir su valor.</strong>
+        </p>
+      </li>
+      <li>
+        <p><em>Ejercicio 2</em><br />
+          <strong>Modificar el valor de las variables. Muestra el
+            valor.</strong>
+        </p>
+      </li>
+      <li>
+        <p><em>Ejercicio 3</em><br />
+          <strong>Demostrar el hoisting con var , let y const.</strong>
+        </p>
+      </li>
+      <li>
+        <p><em>Ejercicio 4</em><br />
+          <strong>Demostrar el alcance de una variable en una función. Declara una
+            variable var let y const y muestra el valor.</strong>
+        </p>
+      </li>
+      <li>
+        <p><em>Ejercicio 5</em><br />
+          <strong>Declara una variable let y una const dentro de una función y
+            muestra el valor. Observa el resultado.</strong>
+        </p>
+      </li>
+      <li>
+        <p><em>Ejercicio 6</em><br />
+          <strong>como solucionariamos los errores del ejercio anterior. Aceptas
+            el reto 😜</strong>
+        </p>
+      </li>
+    </ul>
+  </div>
+  <div class="cell markdown">
+    <p>👍 <a href="../Ejercicios/ej2.js" target="_blank">Soluciones :</a></p>
+  </div>
+</body>
+
+</html>

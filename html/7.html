@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>¿Qué es una promesa en JS?</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+
+      p,
+      h2,
+      h3 {
+        orphans: 3;
+        widows: 3;
+      }
+
+      h2,
+      h3,
+      h4 {
+        page-break-after: avoid;
+      }
+    }
+
+    p {
+      margin: 1em 0;
+    }
+
+    a {
+      color: #1a1a1a;
+    }
+
+    a:visited {
+      color: #1a1a1a;
+    }
+
+    img {
+      max-width: 100%;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      margin-top: 1.4em;
+    }
+
+    h5,
+    h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+
+    h6 {
+      font-weight: normal;
+    }
+
+    ol,
+    ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+
+    li>ol,
+    li>ul {
+      margin-top: 0;
+    }
+
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+
+    .sourceCode {
+      background-color: transparent;
+      overflow: visible;
+    }
+
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+
+    table caption {
+      margin-bottom: 0.75em;
+    }
+
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+
+    #TOC li {
+      list-style: none;
+    }
+
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+
+    #TOC>ul {
+      padding-left: 0;
+    }
+
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+
+    code {
+      white-space: pre-wrap;
+    }
+
+    span.smallcaps {
+      font-variant: small-caps;
+    }
+
+    div.columns {
+      display: flex;
+      gap: min(4vw, 1.5em);
+    }
+
+    div.column {
+      flex: auto;
+      overflow-x: auto;
+    }
+
+    div.hanging-indent {
+      margin-left: 1.5em;
+      text-indent: -1.5em;
+    }
+
+    ul.task-list {
+      list-style: none;
+    }
+
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+
+    pre>code.sourceCode {
+      white-space: pre;
+      position: relative;
+    }
+
+    pre>code.sourceCode>span {
+      display: inline-block;
+      line-height: 1.25;
+    }
+
+    pre>code.sourceCode>span:empty {
+      height: 1.2em;
+    }
+
+    .sourceCode {
+      overflow: visible;
+    }
+
+    code.sourceCode>span {
+      color: inherit;
+      text-decoration: inherit;
+    }
+
+    div.sourceCode {
+      margin: 1em 0;
+    }
+
+    pre.sourceCode {
+      margin: 0;
+    }
+
+    @media screen {
+      div.sourceCode {
+        overflow: auto;
+      }
+    }
+
+    @media print {
+      pre>code.sourceCode {
+        white-space: pre-wrap;
+      }
+
+      pre>code.sourceCode>span {
+        text-indent: -5em;
+        padding-left: 5em;
+      }
+    }
+
+    pre.numberSource code {
+      counter-reset: source-line 0;
+    }
+
+    pre.numberSource code>span {
+      position: relative;
+      left: -4em;
+      counter-increment: source-line;
+    }
+
+    pre.numberSource code>span>a:first-child::before {
+      content: counter(source-line);
+      position: relative;
+      left: -1em;
+      text-align: right;
+      vertical-align: baseline;
+      border: none;
+      display: inline-block;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      padding: 0 4px;
+      width: 4em;
+      color: #aaaaaa;
+    }
+
+    pre.numberSource {
+      margin-left: 3em;
+      border-left: 1px solid #aaaaaa;
+      padding-left: 4px;
+    }
+
+    div.sourceCode {}
+
+    @media screen {
+      pre>code.sourceCode>span>a:first-child::before {
+        text-decoration: underline;
+      }
+    }
+
+    code span.al {
+      color: #ff0000;
+      font-weight: bold;
+    }
+
+    /* Alert */
+    code span.an {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* Annotation */
+    code span.at {
+      color: #7d9029;
+    }
+
+    /* Attribute */
+    code span.bn {
+      color: #40a070;
+    }
+
+    /* BaseN */
+    code span.bu {
+      color: #008000;
+    }
+
+    /* BuiltIn */
+    code span.cf {
+      color: #007020;
+      font-weight: bold;
+    }
+
+    /* ControlFlow */
+    code span.ch {
+      color: #4070a0;
+    }
+
+    /* Char */
+    code span.cn {
+      color: #880000;
+    }
+
+    /* Constant */
+    code span.co {
+      color: #60a0b0;
+      font-style: italic;
+    }
+
+    /* Comment */
+    code span.cv {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* CommentVar */
+    code span.do {
+      color: #ba2121;
+      font-style: italic;
+    }
+
+    /* Documentation */
+    code span.dt {
+      color: #902000;
+    }
+
+    /* DataType */
+    code span.dv {
+      color: #40a070;
+    }
+
+    /* DecVal */
+    code span.er {
+      color: #ff0000;
+      font-weight: bold;
+    }
+
+    /* Error */
+    code span.ex {}
+
+    /* Extension */
+    code span.fl {
+      color: #40a070;
+    }
+
+    /* Float */
+    code span.fu {
+      color: #06287e;
+    }
+
+    /* Function */
+    code span.im {
+      color: #008000;
+      font-weight: bold;
+    }
+
+    /* Import */
+    code span.in {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* Information */
+    code span.kw {
+      color: #007020;
+      font-weight: bold;
+    }
+
+    /* Keyword */
+    code span.op {
+      color: #666666;
+    }
+
+    /* Operator */
+    code span.ot {
+      color: #007020;
+    }
+
+    /* Other */
+    code span.pp {
+      color: #bc7a00;
+    }
+
+    /* Preprocessor */
+    code span.sc {
+      color: #4070a0;
+    }
+
+    /* SpecialChar */
+    code span.ss {
+      color: #bb6688;
+    }
+
+    /* SpecialString */
+    code span.st {
+      color: #4070a0;
+    }
+
+    /* String */
+    code span.va {
+      color: #19177c;
+    }
+
+    /* Variable */
+    code span.vs {
+      color: #4070a0;
+    }
+
+    /* VerbatimString */
+    code span.wa {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* Warning */
+    .display.math {
+      display: block;
+      text-align: center;
+      margin: 0.5rem auto;
+    }
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+
+<body>
+  <div class="cell markdown">
+    <pre><code>                            Preguntas Teoricas</code></pre>
+  </div>
+  <section id="7-qué-es-una-promesa-en-js" class="cell markdown">
+    <h2><strong><em>7. ¿Qué es una promesa en JS?</em></strong></h2>
+    <p><a href="https://youtu.be/ZTC0Gfhdzfc">Promesa ▶</a></p>
+    <p>JavaScript es un lenguaje de programación que destaca por su
+      versatilidad y eficacia, lo que se debe en parte a su capacidad de
+      realizar operaciones <strong>asincrónicas</strong>. Al ser
+      <strong>«single threaded»</strong> (un solo hilo), <strong>sólo puede
+        ejecutar una acción al mismo tiempo</strong>, por lo que el uso de
+      promesas facilita, en buena medida, el control de flujos de datos
+      asíncronos en una aplicación.
+    </p>
+    <p><strong>Las promesas</strong> en JavaScript no solo representan el
+      resultado de una operación asincrónica, sino que también proporcionan
+      métodos que facilitan el manejo y la manipulación de los datos una vez
+      que la promesa se resuelve.</p>
+    <blockquote>
+      <p>Una promesa es un objeto que representa un valor que puede que esté
+        disponible «ahora», en un «futuro» o que «nunca» lo esté. Como no se
+        sabe cuándo va a estar disponible, todas las operaciones dependientes de
+        ese valor, tendrán que posponerse en el tiempo.</p>
+    </blockquote>
+    <p><a href="https://www.youtube.com/shorts/qW67Q4_50TQ?feature=share"><img
+          src="../html/imgHtml/loop.PNG" alt="" /> ▶</a></p>
+  </section>
+  <section id="métodos-de-las-promesas-en-javascript" class="cell markdown">
+    <h3>Métodos de las promesas en JavaScript</h3>
+    <p>Aquí están algunos de los métodos más comunes que puedes
+      utilizar:</p>
+    <ul>
+      <li>
+        <p><strong>.then()</strong>: Este método se utiliza para manejar el
+          resultado exitoso de una promesa. Recibe una función que se ejecutará
+          cuando la promesa se resuelva con éxito y puede recibir el resultado
+          como argumento.</p>
+      </li>
+      <li>
+        <p><strong>.catch()</strong>: Se utiliza para manejar errores que
+          puedan ocurrir durante la ejecución de la promesa. Puedes encadenar
+          .catch() después de .then() para manejar errores específicos.</p>
+      </li>
+      <li>
+        <p><strong>.finally()</strong>: Este método se utiliza para ejecutar
+          una función después de que la promesa se resuelva o se rechace,
+          independientemente del resultado. Es útil para realizar tareas de
+          limpieza o acciones que deben ocurrir sin importar el resultado de la
+          promesa.</p>
+      </li>
+      <li>
+        <p><strong>Promise.all(iterable)</strong>: Este método permite
+          manejar múltiples promesas al mismo tiempo y resuelve una promesa una
+          vez que todas las promesas del iterable se hayan resuelto o alguna de
+          ellas se haya rechazado.</p>
+      </li>
+      <li>
+        <p><strong>Promise.race(iterable)</strong>: Este método resuelve una
+          promesa tan pronto como una de las promesas en el iterable se resuelva o
+          se rechace. Es útil cuando deseas obtener el resultado más rápido de
+          múltiples promesas.</p>
+      </li>
+    </ul>
+    <h4 id="estados-de-las-promesas-en-javascript">Estados de las promesas
+      en JavaScript</h4>
+    <p>Una promesa puede estar en los siguientes tres estados:</p>
+    <ul>
+      <li><strong>Pendiente (pending)</strong>. Es el estado inicial al crear
+        una promesa.</li>
+      <li><strong>Resuelta con éxito (fulfilled)</strong>. Estará resuelta en
+        el momento que llamemos a resolve y, a continuación, se ejecutará la
+        función que pasamos al método <strong><em>.then</em></strong>. Debemos
+        de tener en cuenta que, una vez resuelta, No podremos modificar el valor
+        de la promesa, aunque sí podríamos correr la misma instrucción para
+        obtener un valor distinto y hacerlo las veces que deseemos.</li>
+      <li><strong>Rechazada (rejected)</strong>. También puede ocurrir que se
+        complete pero sea rechazada por un error, pasando a continuación a
+        ejecutar la función que pasamos a <strong><em>.catch</em></strong>.</li>
+    </ul>
+    <p><img src="../html/imgHtml/then.png" alt="" /></p>
+  </section>
+  <section id="cómo-se-crea-una-promesa-en-javascript" class="cell markdown">
+    <h4>Cómo se crea una promesa en JavaScript</h4>
+    <p>Se puede crear una promesa con el constructor promise y pasándole una
+      función con dos parámetros: resolve y reject, que nos deja decirle si ha
+      sido resuelta o rechazada.</p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb2">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>const promise <span class="op">=</span> new Promise((resolve, reject) <span class="op">=&gt;</span> {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  const number <span class="op">=</span> Math.floor(Math.random() <span class="op">*</span> <span class="dv">12</span>)<span class="op">;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  setTimeout(</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    () <span class="op">=&gt;</span> (number <span class="op">&gt;</span> <span class="dv">4</span> ? resolve(number) : reject(new Error(<span class="st">&quot;Menor a 4&quot;</span>))),</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2000</span> <span class="op">//</span> tiempo en milisegundos</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  )<span class="op">;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>promise</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  .then((number) <span class="op">=&gt;</span> console.log(number))</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  .catch((error) <span class="op">=&gt;</span> console.error(error))<span class="op">;</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="op">//</span>   En el ejemplo, hemos creado una promesa que se completará en <span class="dv">2</span> segundos. </span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="op">//</span>   Si el número aleatorio que hemos generado es mayor a <span class="dv">4</span>, se resolverá<span class="op">;</span> en caso contrario,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="op">//</span>   se rechaza y se muestra un error.</span></code></pre>
+    </div>
+  </div>
+  <section id="promesas-en-javascript-en-cadena-chaining" class="cell markdown">
+    <h4>Promesas en JavaScript en cadena (Chaining)</h4>
+    <p>En ocasiones, necesitamos ejecutar <strong>varias operaciones
+        asíncronas una tras otra</strong>, o lo que es lo mismo, <em>después de
+        una operación ejecutada con éxito, comienza la siguiente</em>. Esto
+      tiene fácil resolución utilizando una secuencia de <strong>promesas en
+        cadena</strong>.</p>
+    <p>El archivo, que vamos a llamar texto.txt, devuelve una cadena con la
+      ubicación de otro archivo y seguido de esto, queremos leer ese segundo
+      archivo. Utilizando promesas, quedaría así:</p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb3">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>readFile(<span class="st">&quot;./texto.txt&quot;</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  .then(readFile)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  .then((data) <span class="op">=&gt;</span> console.log(data))</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  .catch((error) <span class="op">=&gt;</span> console.error(error))<span class="op">;</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>Lo que hacemos es leer texto.txt.</p>
+    <p><strong>Si</strong> ocurre un <strong>error</strong>, la promesa
+      <strong>se rechaza</strong> y mostramos el error con console.error.
+    </p>
+    <p><strong>Si lo lee</strong>, ejecutamos su lectura en e<strong>l
+        primer .then y corremos un nuevo readFile</strong>.</p>
+    <p>Este <strong>segundo readFile devuelve una nueva
+        promesa</strong>.</p>
+    <p><strong>Si</strong> hay un <strong>error</strong>, ejecuta el
+      <strong>.catch</strong>
+    </p>
+    <p><strong>Si no, se ejecuta el segundo .then</strong>, que recibe el
+      contenido del segundo archivo y lo muestra en consola.</p>
+    <p>Podremos encadenar tantos .then como necesitemos y ejecutar funciones
+      que devuelvan promesas.</p>
+  </div>
+  <div class="cell markdown">
+    <p><img src="../html/imgHtml/myPromise.png" alt="" /></p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb4">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> Ejemplo de promesa en cadena</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { resolve } <span class="im">from</span> <span class="st">&quot;path&quot;</span><span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>readFile(<span class="st">&quot;./texto.txt.&quot;</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  .then(resolve)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  .then(readFile)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  .then((data) <span class="op">=&gt;</span> console.log(data))</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  .catch((error) <span class="op">=&gt;</span> console.error(error))<span class="op">;</span></span></code></pre>
+    </div>
+  </div>
+  <section id="esperar-varias-promesas" class="cell markdown">
+    <h3>Esperar varias promesas</h3>
+    <p>Imaginemos el siguiente supuesto, donde hacemos múltiples tareas
+      asíncronas y queremos realizar una tarea cuando las tres estén
+      resueltas, por lo que necesitamos esperar a tener las tres promesas
+      cumplidas.</p>
+    <p>Quizás nuestra primera aproximación sería la siguiente: recorrer el
+      array de promesas <strong>promises</strong> con un
+      <strong>.map()</strong>, de modo que creamos un nuevo array derivado con
+      las promesas ya resueltas, esperando por ellas con un
+      <strong>await</strong>:
+    </p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb5">
+      <pre class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>const p1 <span class="op">=</span> fetch(<span class="st">&quot;/robots.txt&quot;</span>)<span class="op">;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>const p2 <span class="op">=</span> fetch(<span class="st">&quot;/theme.css&quot;</span>)<span class="op">;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>const p3 <span class="op">=</span> fetch(<span class="st">&quot;/index.js&quot;</span>)<span class="op">;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>const promises <span class="op">=</span> [p1, p2, p3]<span class="op">;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>const responses <span class="op">=</span> promises.<span class="bu">map</span>(<span class="cf">async</span> (promise) <span class="op">=&gt;</span> {</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="cf">await</span> promise</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>El planteamiento es correcto, sin embargo, el problema es que la
+      función .map() u otras array functions no permiten el uso de operaciones
+      asíncronas en su interior, ya que trabajan de forma síncrona.</p>
+    <blockquote>
+      <p>Si lo hacemos, veremos como la constante responses en lugar de un
+        array de respuestas como probablemente esperábamos, tendrá un array de
+        promesas. Es decir, tendremos exactamente lo mismo que teníamos
+        inicialmente en promises.</p>
+    </blockquote>
+    <p>Para solucionar este problema, podemos utilizar el objeto Promise de
+      Javascript, que incorpora varios métodos estáticos que podemos utilizar
+      en nuestro código. Todos devuelven una promesa (son asíncronos) y son
+      los que veremos a continuación:</p>
+    <p><img src="../img/Promesa.PNG" alt="" /></p>
+  </div>
+  <div class="cell markdown">
+    <p>En los siguientes ejemplos, vamos a utilizar la función
+      <strong>fetch()</strong> para realizar varias peticiones y descargar
+      varios archivos diferentes que necesitaremos para nuestras tareas.
+    </p>
+    <h3 id="el-método-promiseall">El método Promise.all()</h3>
+    <p>El método <strong>Promise.all()</strong> funciona como un
+      <strong>«todo o nada»</strong>: le pasas un grupo de varias promesas. El
+      <em>Promise.all()</em> te devolverá una promesa que se cumplirá cuando
+      <strong>todas las promesas del grupo</strong> se cumplan. Si alguna de
+      ellas se rechaza, la promesa de <em>Promise.all()</em> también lo
+      hará.
+    </p>
+    <p>Observa este ejemplo:</p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb6">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>const p1 <span class="op">=</span> fetch(<span class="st">&quot;/robots.txt&quot;</span>)<span class="op">;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>const p2 <span class="op">=</span> fetch(<span class="st">&quot;/index.css&quot;</span>)<span class="op">;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>const p3 <span class="op">=</span> fetch(<span class="st">&quot;/index.js&quot;</span>)<span class="op">;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>const promises <span class="op">=</span> [p1, p2, p3]<span class="op">;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> Utilizando <span class="cf">async</span><span class="op">/</span><span class="cf">await</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>const responses <span class="op">=</span> <span class="cf">await</span> Promise.<span class="bu">all</span>(promises)<span class="op">;</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>const codes <span class="op">=</span> responses.<span class="bu">map</span>(response <span class="op">=&gt;</span> response.status)<span class="op">;</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>console.log(codes)<span class="op">;</span> <span class="op">//</span> [<span class="dv">200</span>, <span class="dv">200</span>, <span class="dv">200</span>]</span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <ul>
+      <li>
+        <p>Realizamos <strong>3 fetch()</strong>, donde cada uno devuelve
+          una promesa.</p>
+      </li>
+      <li>
+        <p>Almacenamos esas 3 promesas en un <strong>array</strong>
+          promises.</p>
+      </li>
+      <li>
+        <p>Al hacer un <strong>Promise.all(promises)</strong> devolvemos una
+          nueva promesa.</p>
+      </li>
+      <li>
+        <p>Dicha promesa se cumplirá, si todas las que pasamos en el array
+          se cumplen invidiualmente.</p>
+      </li>
+      <li>
+        <p>En el caso de que alguna de las 3 se rechace, el
+          <em>Promise.all()</em> la promesa se rechaza.
+        </p>
+      </li>
+    </ul>
+    <p>También se podría realizar utilizando <strong>.then()</strong> en
+      lugar de <em>async/await</em>:</p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb7">
+      <pre class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> Utilizando .then</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>Promise.<span class="bu">all</span>(promises)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  .then(responses <span class="op">=&gt;</span> {</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    const codes <span class="op">=</span> responses.<span class="bu">map</span>(response <span class="op">=&gt;</span> response.status)<span class="op">;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    console.log(codes)<span class="op">;</span> <span class="op">//</span> [<span class="dv">200</span>, <span class="dv">200</span>, <span class="dv">200</span>]</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre>
+    </div>
+  </div>
+  <section id="el-método-promiseallsettled" class="cell markdown">
+    <h3>El método Promise.allSettled()</h3>
+    <p>El método <strong>Promise.allSettled()</strong> funciona como un
+      <strong>«todas procesadas»</strong>: devuelve una promesa que se cumple
+      cuando todas las promesas del array se hayan procesado,
+      independientemente de que se hayan cumplido o rechazado.
+    </p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb8">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>const p1 <span class="op">=</span> fetch(<span class="st">&quot;/robots.txt&quot;</span>)<span class="op">;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>const p2 <span class="op">=</span> fetch(<span class="st">&quot;https://google.com/index.css&quot;</span>)<span class="op">;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>const p3 <span class="op">=</span> fetch(<span class="st">&quot;/index.js&quot;</span>)<span class="op">;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>const promises <span class="op">=</span> [p1, p2, p3]<span class="op">;</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>const results <span class="op">=</span> <span class="cf">await</span> Promise.allSettled(promises)<span class="op">;</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>const objects <span class="op">=</span> results.<span class="bu">map</span>(result <span class="op">=&gt;</span> result)<span class="op">;</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>console.log(objects)<span class="op">;</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>Esta operación nos devuelve un <strong>array de objetos</strong>
+      (<em>uno por cada promesa</em>) donde cada objeto tiene dos
+      propiedades:</p>
+    <ul>
+      <li>La <strong>propiedad status</strong>, donde nos indica si cada
+        promesa individual ha sido cumplida o rechazada</li>
+      <li>La <strong>propiedad value</strong>, con los valores devueltos por
+        la promesa si se cumple.</li>
+      <li>La <strong>propiedad reason</strong>, con la razón del rechazo de la
+        promesa si no se cumple.</li>
+    </ul>
+    <p>En este caso, obtendremos que la <em>primera y última promesa se
+        resuelven (fulfilled)</em>, mientras que la <em>segunda nos da un
+        error</em> de CORS (origen cruzado) y <em>se rechaza
+        (rejected)</em>.</p>
+    <h3 id="el-método-promiseany">El método Promise.any()</h3>
+    <p>El método <strong>Promise.any()</strong> funciona como <strong>«la
+        primera que se cumpla»</strong>: Devuelve una promesa con el valor de la
+      primera promesa individual del array que se cumpla. Si todas las
+      promesas se rechazan, entonces devuelve una promesa rechazada.</p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb9">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>const p1 <span class="op">=</span> fetch(<span class="st">&quot;/robots.txt&quot;</span>)<span class="op">;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>const p2 <span class="op">=</span> fetch(<span class="st">&quot;/index.css&quot;</span>)<span class="op">;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>const p3 <span class="op">=</span> fetch(<span class="st">&quot;/index.js&quot;</span>)<span class="op">;</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>const promises <span class="op">=</span> [p1, p2, p3]<span class="op">;</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>const response <span class="op">=</span> <span class="cf">await</span> Promise.<span class="bu">any</span>(promises)<span class="op">;</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>console.log(response)<span class="op">;</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>Como vemos, Promise.any() devolverá una respuesta de la primera
+      promesa cumplida.</p>
+    <h3 id="el-método-promiserace">El método Promise.race()</h3>
+    <p>El método <strong>Promise.race()</strong> funciona como una
+      <strong>«la primera que se procese»</strong>: la primera promesa del
+      array que sea procesada, independientemente de que se haya cumplido o
+      rechazado, determinará la devolución de la promesa del Promise.race().
+      Si se cumple, devuelve una promesa cumplida, en caso negativo, devuelve
+      una rechazada.
+    </p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb10">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>const p1 <span class="op">=</span> fetch(<span class="st">&quot;/robots.txt&quot;</span>)<span class="op">;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>const p2 <span class="op">=</span> fetch(<span class="st">&quot;/index.css&quot;</span>)<span class="op">;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>const p3 <span class="op">=</span> fetch(<span class="st">&quot;/index.js&quot;</span>)<span class="op">;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>const promises <span class="op">=</span> [p1, p2, p3]<span class="op">;</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>const response <span class="op">=</span> <span class="cf">await</span> Promise.race([p1, p2, p3])<span class="op">;</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>console.log(response)<span class="op">;</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>De forma muy similar a la anterior, <em>Promise.race()</em> devolverá
+      la promesa que se resuelva primero, ya sea cumpliéndose o
+      rechazándose.</p>
+    <blockquote>
+      <p>Las promesas en JavaScript son una herramienta que nos ayuda a
+        manejar operaciones asincrónicas de manera eficiente. Por ello, usarlas
+        de manera adecuada es fundamental para el correcto desarrollo de
+        aplicaciones web, ya que son acciones que se resolverán a futuro (cuando
+        se pueda) y que sabremos si se llevaron a cabo con éxito o no.</p>
+    </blockquote>
+    <p>🎯 <strong>Así, las promesas son un componente importante dentro de
+        la programación y su dominio es una habilidad valiosa para cualquier
+        desarrollador</strong></p>
+  </div>
+  <div class="cell markdown">
+    <p><a href="https://www.w3schools.com/howto/howto_js_spread_operator.asp">Saber
+        Más: 🧠</a></p>
+  </div>
+  <div class="cell markdown">
+    <pre><code>                                                        EJERCICIOS</code></pre>
+  </div>
+  <div class="cell markdown">
+    <ul>
+      <li>
+        <p>Ejercicio 1:<br />
+          <strong>Promesa simple Crea una promesa que se resuelva después de 1
+            segundo y que devuelva el mensaje “¡Promesa
+            resuelta!”.</strong>
+        </p>
+      </li>
+      <li>
+        <p>Ejercicio 2:<br />
+          <strong>Promesa que se rechaza Crea una promesa que se rechace después
+            de 2 segundo y que devuelva el mensaje “¡Promesa
+            rechazada!”.</strong>
+        </p>
+      </li>
+      <li>
+        <p>Ejercicio 3:<br />
+          <strong>Encadenamiento de promesas Crea una promesa que se resuelva con
+            el valor 3 después de 3 segundo. Luego, encadena otras dos promesas que
+            multipliquen el resultado por 2.</strong>
+        </p>
+      </li>
+      <li>
+        <p>Ejercicio 4:<br />
+          <strong>Manejo de errores en promesas Crea una promesa que se rechace
+            con el mensaje “¡Error!” después de 4 segundo. Asegúrate de manejar el
+            error correctamente.</strong>
+        </p>
+      </li>
+      <li>
+        <p>Ejercicio 5:<br />
+          <strong>Promesas en paralelo con Promise.all Crea dos promesas, una que
+            se resuelva con el valor 1 después de 1 segundo y otra que se resuelva
+            con el valor 2 después de 2 segundos. Utiliza Promise.all para esperar a
+            que ambas promesas se resuelvan.</strong>
+        </p>
+      </li>
+      <li>
+        <p>Ejercicio 6:<br />
+          <strong>Promesa que se resuelve primero con Promise.race Crea dos
+            promesas, una que se resuelva con el valor 1 después de 2 segundos y
+            otra que se resuelva con el valor 2 después de 1 segundo. Utiliza
+            Promise.race para obtener el valor de la promesa que se resuelve
+            primero.</strong>
+        </p>
+      </li>
+      <li>
+        <p>Ejercicio 7:<br />
+          <strong>Promesa con finally Crea una promesa que se resuelva con el
+            mensaje “¡Hecho!” después de 1 segundo. Asegúrate de utilizar finally
+            para imprimir un mensaje cuando la promesa se haya resuelto o
+            rechazado.</strong>
+        </p>
+      </li>
+      <li>
+        <p>Ejercicio 8:<br />
+          <strong>Promesa con estado pendiente Crea una promesa pero no la
+            resuelvas ni la rechaces. Imprime el estado de la promesa para verificar
+            que está pendiente.</strong>
+        </p>
+      </li>
+    </ul>
+  </div>
+  <div class="cell markdown">
+    <p>👍 <a href="../Ejercicios/ej7.js" target="_blank">Ejercicios :</a></p>
+  </div>
+</body>
+
+</html>

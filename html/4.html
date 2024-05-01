@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>¿Qué es la deconstrucción de variables?</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+
+      p,
+      h2,
+      h3 {
+        orphans: 3;
+        widows: 3;
+      }
+
+      h2,
+      h3,
+      h4 {
+        page-break-after: avoid;
+      }
+    }
+
+    p {
+      margin: 1em 0;
+    }
+
+    a {
+      color: #1a1a1a;
+    }
+
+    a:visited {
+      color: #1a1a1a;
+    }
+
+    img {
+      max-width: 100%;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      margin-top: 1.4em;
+    }
+
+    h5,
+    h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+
+    h6 {
+      font-weight: normal;
+    }
+
+    ol,
+    ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+
+    li>ol,
+    li>ul {
+      margin-top: 0;
+    }
+
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+
+    .sourceCode {
+      background-color: transparent;
+      overflow: visible;
+    }
+
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+
+    table caption {
+      margin-bottom: 0.75em;
+    }
+
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+
+    #TOC li {
+      list-style: none;
+    }
+
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+
+    #TOC>ul {
+      padding-left: 0;
+    }
+
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+
+    code {
+      white-space: pre-wrap;
+    }
+
+    span.smallcaps {
+      font-variant: small-caps;
+    }
+
+    div.columns {
+      display: flex;
+      gap: min(4vw, 1.5em);
+    }
+
+    div.column {
+      flex: auto;
+      overflow-x: auto;
+    }
+
+    div.hanging-indent {
+      margin-left: 1.5em;
+      text-indent: -1.5em;
+    }
+
+    ul.task-list {
+      list-style: none;
+    }
+
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+
+    pre>code.sourceCode {
+      white-space: pre;
+      position: relative;
+    }
+
+    pre>code.sourceCode>span {
+      display: inline-block;
+      line-height: 1.25;
+    }
+
+    pre>code.sourceCode>span:empty {
+      height: 1.2em;
+    }
+
+    .sourceCode {
+      overflow: visible;
+    }
+
+    code.sourceCode>span {
+      color: inherit;
+      text-decoration: inherit;
+    }
+
+    div.sourceCode {
+      margin: 1em 0;
+    }
+
+    pre.sourceCode {
+      margin: 0;
+    }
+
+    @media screen {
+      div.sourceCode {
+        overflow: auto;
+      }
+    }
+
+    @media print {
+      pre>code.sourceCode {
+        white-space: pre-wrap;
+      }
+
+      pre>code.sourceCode>span {
+        text-indent: -5em;
+        padding-left: 5em;
+      }
+    }
+
+    pre.numberSource code {
+      counter-reset: source-line 0;
+    }
+
+    pre.numberSource code>span {
+      position: relative;
+      left: -4em;
+      counter-increment: source-line;
+    }
+
+    pre.numberSource code>span>a:first-child::before {
+      content: counter(source-line);
+      position: relative;
+      left: -1em;
+      text-align: right;
+      vertical-align: baseline;
+      border: none;
+      display: inline-block;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      padding: 0 4px;
+      width: 4em;
+      color: #aaaaaa;
+    }
+
+    pre.numberSource {
+      margin-left: 3em;
+      border-left: 1px solid #aaaaaa;
+      padding-left: 4px;
+    }
+
+    div.sourceCode {}
+
+    @media screen {
+      pre>code.sourceCode>span>a:first-child::before {
+        text-decoration: underline;
+      }
+    }
+
+    code span.al {
+      color: #ff0000;
+      font-weight: bold;
+    }
+
+    /* Alert */
+    code span.an {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* Annotation */
+    code span.at {
+      color: #7d9029;
+    }
+
+    /* Attribute */
+    code span.bn {
+      color: #40a070;
+    }
+
+    /* BaseN */
+    code span.bu {
+      color: #008000;
+    }
+
+    /* BuiltIn */
+    code span.cf {
+      color: #007020;
+      font-weight: bold;
+    }
+
+    /* ControlFlow */
+    code span.ch {
+      color: #4070a0;
+    }
+
+    /* Char */
+    code span.cn {
+      color: #880000;
+    }
+
+    /* Constant */
+    code span.co {
+      color: #60a0b0;
+      font-style: italic;
+    }
+
+    /* Comment */
+    code span.cv {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* CommentVar */
+    code span.do {
+      color: #ba2121;
+      font-style: italic;
+    }
+
+    /* Documentation */
+    code span.dt {
+      color: #902000;
+    }
+
+    /* DataType */
+    code span.dv {
+      color: #40a070;
+    }
+
+    /* DecVal */
+    code span.er {
+      color: #ff0000;
+      font-weight: bold;
+    }
+
+    /* Error */
+    code span.ex {}
+
+    /* Extension */
+    code span.fl {
+      color: #40a070;
+    }
+
+    /* Float */
+    code span.fu {
+      color: #06287e;
+    }
+
+    /* Function */
+    code span.im {
+      color: #008000;
+      font-weight: bold;
+    }
+
+    /* Import */
+    code span.in {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* Information */
+    code span.kw {
+      color: #007020;
+      font-weight: bold;
+    }
+
+    /* Keyword */
+    code span.op {
+      color: #666666;
+    }
+
+    /* Operator */
+    code span.ot {
+      color: #007020;
+    }
+
+    /* Other */
+    code span.pp {
+      color: #bc7a00;
+    }
+
+    /* Preprocessor */
+    code span.sc {
+      color: #4070a0;
+    }
+
+    /* SpecialChar */
+    code span.ss {
+      color: #bb6688;
+    }
+
+    /* SpecialString */
+    code span.st {
+      color: #4070a0;
+    }
+
+    /* String */
+    code span.va {
+      color: #19177c;
+    }
+
+    /* Variable */
+    code span.vs {
+      color: #4070a0;
+    }
+
+    /* VerbatimString */
+    code span.wa {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* Warning */
+    .display.math {
+      display: block;
+      text-align: center;
+      margin: 0.5rem auto;
+    }
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+
+<body>
+  <div class="cell markdown">
+    <pre><code>                            Preguntas Teoricas</code></pre>
+  </div>
+  <section id="4-qué-es-la-deconstrucción-de-variables" class="cell markdown">
+    <h2><strong><em>4. ¿Qué es la deconstrucción de
+          variables?</em></strong></h2>
+    <p>Es una expresión que te permite extraer o “destructurar” datos desde
+      estructuras de datos como arrays, objetos, y crear nuevas variables con
+      ese dato en particular.</p>
+    <p>Te permite extraer propiedades de un objeto, items de un array de una
+      manera “sencilla” y de una sola vez.</p>
+    <p>Pensemos en una estructura de datos común y una tarea repetitiva</p>
+  </section>
+  <div class="cell markdown">
+    <p><img src="../html/imgHtml/DES.png" alt="" /></p>
+  </div>
+  <div class="cell markdown">
+    <p><a href="https://youtu.be/vVZJWPxMuFY"><strong>Desestructuración
+          ▶</strong></a></p>
+  </div>
+  <div class="cell markdown">
+    <p>Entonces, con la desestructuración de JavaScript podemos capturar una
+      sola de estas propiedades en una nueva variable, fuera del objeto. Para
+      ello, utilizamos cualquiera de las palabras clave de variables, luego
+      encerramos la propiedad en las llaves { } y, finalmente, la igualamos al
+      objeto del que proviene.</p>
+    <p>Empecemos por las más sencillas, que son las operaciones de
+      desestructuración de arrays. Si queremos extraer datos de arreglos, es
+      bastante simple usando la asignación de desestructuración.</p>
+    <h4 id="sintaxis-básica-arrays">SINTAXIS BÁSICA ARRAYS</h4>
+    <pre><code>let variableName = [var1, var2, var3];
+(let [firstName, secondName] = desestructuración); </code></pre>
+    <p>Extraemos el primer y segundo valor del array <em>variableName</em>
+      en una variable denominada <em>firstName</em> y otra llamada
+      <em>secondName</em> pero como el array tiene más elementos y sólo hemos
+      indicado dos variables (first y second), el resto son
+      <em>descartadas</em>.
+    </p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb3">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>let introduccion <span class="op">=</span> [<span class="st">&quot;Hola&quot;</span>, <span class="st">&quot;yo&quot;</span> , <span class="st">&quot;soy&quot;</span>, <span class="st">&quot;Sara&quot;</span>]<span class="op">;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>(let [saludo, pronombre] <span class="op">=</span> introduccion)<span class="op">;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>console.log(saludo)<span class="op">;//</span><span class="st">&quot;Hola&quot;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>console.log(pronombre)<span class="op">;//</span><span class="st">&quot;yo&quot;</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <blockquote>
+      <p><strong>Nota</strong> Que las variables son establecidas de izquierda
+        a derecha. De esta manera la primera variable obtiene el valor del
+        primer elemento del array, la segunda variable obtiene el valor del
+        segundo elemento del array, y así sucesivamente.</p>
+    </blockquote>
+  </div>
+  <div class="cell markdown">
+    <p>¿Qué pasa si queremos obtener el primer y el último elemento de
+      nuestro array, en lugar de obtener solo el primer y el segundo
+      elemento</p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb4">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>let [saludo,,,nombre] <span class="op">=</span> [<span class="st">&quot;Hola&quot;</span>, <span class="st">&quot;yo&quot;</span> ,<span class="st">&quot;soy&quot;</span>, <span class="st">&quot;Sara&quot;</span>]<span class="op">;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>console.log(saludo)<span class="op">;//</span><span class="st">&quot;Hola&quot;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>console.log(nombre)<span class="op">;//</span><span class="st">&quot;Sara&quot;</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>De esta manera, la coma hace su magia. Así que si queremos excluir
+      todos los elementos, haríamos esto.</p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb5">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>let [,,,,] <span class="op">=</span> [<span class="st">&quot;Hola&quot;</span>, <span class="st">&quot;yo&quot;</span> , <span class="st">&quot;soy&quot;</span>, <span class="st">&quot;Sara&quot;</span>]<span class="op">;</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>¿Qué pasa si queremos asignar algunos valores de un array a una
+      variable y el resto a otra?. En este caso, podríamos hacer esto:</p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb6">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>let [saludo,...introduccion] <span class="op">=</span> [<span class="st">&quot;Hola&quot;</span>, <span class="st">&quot;yo&quot;</span> , <span class="st">&quot;soy&quot;</span>, <span class="st">&quot;Sara&quot;</span>]<span class="op">;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>console.log(saludo)<span class="op">;//</span><span class="st">&quot;Hola&quot;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>console.log(introduccion)<span class="op">;//</span>[<span class="st">&quot;yo&quot;</span>, <span class="st">&quot;soy&quot;</span>, <span class="st">&quot;Sara&quot;</span>]</span></code></pre>
+    </div>
+  </div>
+  <section id="intercambio-de-variables" class="cell markdown">
+    <h3>Intercambio de variables</h3>
+    <p>Veamos otro ejemplo donde utilizamos la desestructuración. En este
+      caso, haremos un clásico intercambio de variables, donde el valor
+      inicial de a debe estar en b y viceversa. Sin utilizar
+      desestructuración, debemos utilizar una variable auxiliar aux donde
+      guardar uno de los valores temporalmente, mientras hacemos el cambio de
+      variables:</p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb7">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> Sin desestructuración</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> let a <span class="op">=</span> <span class="dv">10</span><span class="op">;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> let b <span class="op">=</span> <span class="dv">5</span><span class="op">;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> let aux <span class="op">=</span> a<span class="op">;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> a <span class="op">=</span> b<span class="op">;</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> b <span class="op">=</span> aux<span class="op">;</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> Con desestructuración</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>let a <span class="op">=</span> <span class="dv">10</span><span class="op">;</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>let b <span class="op">=</span> <span class="dv">5</span><span class="op">;</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>[a, b] <span class="op">=</span> [b, a]<span class="op">;</span></span></code></pre>
+    </div>
+  </div>
+  <section id="reestructuración-de-arrays" class="cell markdown">
+    <h4>Reestructuración de arrays</h4>
+    <p>Aprovechando estas características que hemos visto de
+      desestructuración, también podríamos aprovecharlas para reestructurar un
+      array y recrear arrays. Veámoslo con un ejemplo.</p>
+    <p><em>Tenemos un array de 2 elementos [3, 4] y queremos aprovecharlo
+        para crear un nuevo array del 1 al 5. Vamos a hacer uso de la
+        desestructuración para reaprovecharlo:</em></p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb8">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>const pair <span class="op">=</span> [<span class="dv">3</span>, <span class="dv">4</span>]<span class="op">;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> Usando desestructuración <span class="op">+</span> spread</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>const complete <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">2</span>, ...pair, <span class="dv">5</span>]<span class="op">;</span>  <span class="op">//</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>]</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> Sin usar desestructuración</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> const complete <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">2</span>, pair, <span class="dv">5</span>]<span class="op">;</span>     <span class="op">//</span> [<span class="dv">1</span>, <span class="dv">2</span>, [<span class="dv">3</span>, <span class="dv">4</span>], <span class="dv">5</span>]</span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <blockquote>
+      <p><em>En este caso, tendríamos que complete es el nuevo array [1, 2, 3,
+          4, 5] que buscábamos si usamos la desestructuración, pero ten en cuenta
+          que si no utilizaramos el ... previo al pair, conseguiríamos algo muy
+          diferente: [1, 2, [3, 4], 5].</em></p>
+    </blockquote>
+  </div>
+  <section id="sintaxis-básica-objetos" class="cell markdown">
+    <h4>SINTAXIS BÁSICA OBJETOS</h4>
+    <pre><code>let { var1, var2 } = { var1: …, var2… }</code></pre>
+    <p>Tenemos un objeto existente en el lado derecho, que queremos dividir
+      en variables. El lado izquierdo contiene un patrón para las propiedades
+      correspondientes, en el caso simple eso es una lista de variables entre
+      llaves {...}</p>
+    <p>Lo que destructuring permite, es hacer este proceso de una manera más
+      directa</p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb10">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>let persona <span class="op">=</span> {nombre: <span class="st">&quot;Beatriz&quot;</span>, pais: <span class="st">&quot;España&quot;</span>, trabajo: <span class="st">&quot;Desarrolladora&quot;</span>}<span class="op">;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>let nombre <span class="op">=</span> persona.nombre<span class="op">;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>let pais <span class="op">=</span> persona.pais<span class="op">;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>let trabajo <span class="op">=</span> persona.trabajo<span class="op">;</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>console.log(nombre)<span class="op">;//</span><span class="st">&quot;Beatriz&quot;</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>console.log(pais)<span class="op">;//</span><span class="st">&quot;España&quot;</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>console.log(trabajo)<span class="op">;//</span>Desarrolladora<span class="st">&quot;</span></span></code></pre>
+    </div>
+  </div>
+  <section id="anidamiento-en-desestructuración-de-objetos" class="cell markdown">
+    <h5>Anidamiento en desestructuración de Objetos</h5>
+    <p>Objetos también pueden ser anidados al desestructurar:</p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb11">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>let persona <span class="op">=</span> {</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    nombre: <span class="st">&quot;Sara&quot;</span>,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    lugar: {</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>        pais: <span class="st">&quot;Nigeria&quot;</span>, </span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>        ciudad: <span class="st">&quot;Lagos&quot;</span> }, </span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    amigas : [<span class="st">&quot;Annie&quot;</span>, <span class="st">&quot;Becky&quot;</span>]</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>let {nombre:otroNombre,</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>     lugar: {</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>         pais : region,</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>         ciudad : x}</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    } <span class="op">=</span> persona<span class="op">;</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>console.log(otroNombre)<span class="op">;//</span><span class="st">&quot;Sarah&quot;</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>console.log(region)<span class="op">;//</span><span class="st">&quot;Nigeria&quot;</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>Este código toma un objeto llamado <em>persona</em> que tiene
+      información sobre una persona llamada "Sara" que vive en Lagos, Nigeria,
+      y tiene amigas llamadas "Annie" y "Becky". Luego, utiliza la
+      "destructuring" para extraer y asignar valores específicos de este
+      objeto a variables nuevas.</p>
+    <p>Se extrae el nombre de la persona y lo asigna a una variable llamada
+      <em>otroNombre</em>, el país de residencia lo asigna a una variable
+      llamada <em>region</em>, y la ciudad de residencia lo asigna a una
+      variable llamada x.
+    </p>
+    <p>Finalmente, al imprimir estas variables, se mostrará:</p>
+    <ul>
+      <li>otroNombre, que es "Sara"</li>
+      <li>region, que es "Nigeria"</li>
+    </ul>
+    <p>Esta es una forma útil de extraer información específica de un objeto
+      en JavaScript de una manera más concisa.</p>
+  </div>
+  <div class="cell markdown">
+    <p><a href="https://youtu.be/UgEaJBz3bjY">resumen: ▶</a></p>
+  </div>
+  <div class="cell markdown">
+    <p><a href="https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment">Saber
+        Más: 🧠</a></p>
+  </div>
+  <div class="cell markdown">
+    <pre><code>                                                        EJERCICIOS</code></pre>
+  </div>
+  <div class="cell markdown">
+    <ul>
+      <li>
+        <p>Ejercicio 1:<br />
+          <strong>Intercambiar los valores de las variables a y b utilizando
+            desestructuración</strong>
+        </p>
+      </li>
+      <li>
+        <p>Ejercicio 2:<br />
+          <strong>Crea una variable para el primer elemento de un array y otra
+            para el resto de elementos.</strong>
+        </p>
+      </li>
+      <li>
+        <p>Ejercicio 3:<br />
+          <strong>Desestructura un objeto en variables con nombres diferentes a
+            las propiedades del objeto Tu tarea es modificar el objeto
+            desestructurado de tal manera que al imprimir "ruedas" se muestre el
+            valor de "coche" y al imprimir "rail" se muestre el valor de
+            "tren".(Ford, Ave)</strong>
+        </p>
+      </li>
+      <li>
+        <p>Ejercicio 4:<br />
+          <strong>Desestructura un array y un objeto dentro de una función suma
+            [a, b] y saludo {nombre, edad} respectivamente para usar sus elementos
+            como argumentos.</strong>
+        </p>
+      </li>
+      <li>
+        <p>Ejercicio 5:<br />
+          <strong>Asigna valores a las variables patas, familia y mueble
+            utilizando desestructuración de arrays. Para ello, debes seguir los
+            siguientes pasos:</strong>
+        </p>
+        <ul>
+          <li><strong>Crea una variable llamada patas y una variable llamada
+              familia.</strong></li>
+          <li><strong>Crea una variable llamada mueble y asigna el valor 'mesa' a
+              ella.</strong></li>
+          <li><strong>Utiliza la desestructuración de arrays para asignar los
+              valores de las variables patas y familia a partir de los valores del
+              array [[4, 'cocina']].</strong></li>
+          <li><strong>Imprime el valor de las variables patas, familia y
+              mueble.</strong></li>
+        </ul>
+      </li>
+      <li>
+        <p>Ejercicio 6:<br />
+          <strong>Desestructura un objeto anidado y asigna valores hola y mundo, a
+            las propiedades 'hello' y nombre, y a las variables 'hello' y
+            'nombre'.</strong>
+        </p>
+      </li>
+    </ul>
+  </div>
+  <div class="cell markdown">
+    <p>👍 <a href="../Ejercicios/ej4.js" target="_blank">Soluciones :</a></p>
+  </div>
+</body>
+
+</html>

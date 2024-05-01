@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>¿Qué hacen async y await por nosotros?</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+
+      p,
+      h2,
+      h3 {
+        orphans: 3;
+        widows: 3;
+      }
+
+      h2,
+      h3,
+      h4 {
+        page-break-after: avoid;
+      }
+    }
+
+    p {
+      margin: 1em 0;
+    }
+
+    a {
+      color: #1a1a1a;
+    }
+
+    a:visited {
+      color: #1a1a1a;
+    }
+
+    img {
+      max-width: 100%;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      margin-top: 1.4em;
+    }
+
+    h5,
+    h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+
+    h6 {
+      font-weight: normal;
+    }
+
+    ol,
+    ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+
+    li>ol,
+    li>ul {
+      margin-top: 0;
+    }
+
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+
+    .sourceCode {
+      background-color: transparent;
+      overflow: visible;
+    }
+
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+
+    table caption {
+      margin-bottom: 0.75em;
+    }
+
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+
+    #TOC li {
+      list-style: none;
+    }
+
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+
+    #TOC>ul {
+      padding-left: 0;
+    }
+
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+
+    code {
+      white-space: pre-wrap;
+    }
+
+    span.smallcaps {
+      font-variant: small-caps;
+    }
+
+    div.columns {
+      display: flex;
+      gap: min(4vw, 1.5em);
+    }
+
+    div.column {
+      flex: auto;
+      overflow-x: auto;
+    }
+
+    div.hanging-indent {
+      margin-left: 1.5em;
+      text-indent: -1.5em;
+    }
+
+    ul.task-list {
+      list-style: none;
+    }
+
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+
+    pre>code.sourceCode {
+      white-space: pre;
+      position: relative;
+    }
+
+    pre>code.sourceCode>span {
+      display: inline-block;
+      line-height: 1.25;
+    }
+
+    pre>code.sourceCode>span:empty {
+      height: 1.2em;
+    }
+
+    .sourceCode {
+      overflow: visible;
+    }
+
+    code.sourceCode>span {
+      color: inherit;
+      text-decoration: inherit;
+    }
+
+    div.sourceCode {
+      margin: 1em 0;
+    }
+
+    pre.sourceCode {
+      margin: 0;
+    }
+
+    @media screen {
+      div.sourceCode {
+        overflow: auto;
+      }
+    }
+
+    @media print {
+      pre>code.sourceCode {
+        white-space: pre-wrap;
+      }
+
+      pre>code.sourceCode>span {
+        text-indent: -5em;
+        padding-left: 5em;
+      }
+    }
+
+    pre.numberSource code {
+      counter-reset: source-line 0;
+    }
+
+    pre.numberSource code>span {
+      position: relative;
+      left: -4em;
+      counter-increment: source-line;
+    }
+
+    pre.numberSource code>span>a:first-child::before {
+      content: counter(source-line);
+      position: relative;
+      left: -1em;
+      text-align: right;
+      vertical-align: baseline;
+      border: none;
+      display: inline-block;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      padding: 0 4px;
+      width: 4em;
+      color: #aaaaaa;
+    }
+
+    pre.numberSource {
+      margin-left: 3em;
+      border-left: 1px solid #aaaaaa;
+      padding-left: 4px;
+    }
+
+    div.sourceCode {}
+
+    @media screen {
+      pre>code.sourceCode>span>a:first-child::before {
+        text-decoration: underline;
+      }
+    }
+
+    code span.al {
+      color: #ff0000;
+      font-weight: bold;
+    }
+
+    /* Alert */
+    code span.an {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* Annotation */
+    code span.at {
+      color: #7d9029;
+    }
+
+    /* Attribute */
+    code span.bn {
+      color: #40a070;
+    }
+
+    /* BaseN */
+    code span.bu {
+      color: #008000;
+    }
+
+    /* BuiltIn */
+    code span.cf {
+      color: #007020;
+      font-weight: bold;
+    }
+
+    /* ControlFlow */
+    code span.ch {
+      color: #4070a0;
+    }
+
+    /* Char */
+    code span.cn {
+      color: #880000;
+    }
+
+    /* Constant */
+    code span.co {
+      color: #60a0b0;
+      font-style: italic;
+    }
+
+    /* Comment */
+    code span.cv {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* CommentVar */
+    code span.do {
+      color: #ba2121;
+      font-style: italic;
+    }
+
+    /* Documentation */
+    code span.dt {
+      color: #902000;
+    }
+
+    /* DataType */
+    code span.dv {
+      color: #40a070;
+    }
+
+    /* DecVal */
+    code span.er {
+      color: #ff0000;
+      font-weight: bold;
+    }
+
+    /* Error */
+    code span.ex {}
+
+    /* Extension */
+    code span.fl {
+      color: #40a070;
+    }
+
+    /* Float */
+    code span.fu {
+      color: #06287e;
+    }
+
+    /* Function */
+    code span.im {
+      color: #008000;
+      font-weight: bold;
+    }
+
+    /* Import */
+    code span.in {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* Information */
+    code span.kw {
+      color: #007020;
+      font-weight: bold;
+    }
+
+    /* Keyword */
+    code span.op {
+      color: #666666;
+    }
+
+    /* Operator */
+    code span.ot {
+      color: #007020;
+    }
+
+    /* Other */
+    code span.pp {
+      color: #bc7a00;
+    }
+
+    /* Preprocessor */
+    code span.sc {
+      color: #4070a0;
+    }
+
+    /* SpecialChar */
+    code span.ss {
+      color: #bb6688;
+    }
+
+    /* SpecialString */
+    code span.st {
+      color: #4070a0;
+    }
+
+    /* String */
+    code span.va {
+      color: #19177c;
+    }
+
+    /* Variable */
+    code span.vs {
+      color: #4070a0;
+    }
+
+    /* VerbatimString */
+    code span.wa {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* Warning */
+    .display.math {
+      display: block;
+      text-align: center;
+      margin: 0.5rem auto;
+    }
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+
+<body>
+  <div class="cell markdown">
+    <pre><code>                            Preguntas Teoricas</code></pre>
+  </div>
+  <section id="8-qué-hacen-async-y-await-por-nosotros" class="cell markdown">
+    <h2><strong><em>8. ¿Qué hacen async y await por
+          nosotros?</em></strong></h2>
+    <p><a href="https://youtu.be/6O8ax3JYboc?t=96"><em>Un repaso y al
+          lio</em> ▶</a></p>
+    <p><img src="../html/imgHtml/async.png" alt="" /></p>
+    <p>Las palabras clave <strong>async/await</strong>, que no son más que
+      una forma de azúcar sintáctico para <strong>gestionar las
+        promesas</strong> de una forma más similar a lo que solemos estar
+      acostumbrados. Recordemos un fragmento de código donde manejamos
+      promesas mediante .then():</p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb2">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>fetch(<span class="st">&quot;/robots.txt&quot;</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  .then((response) <span class="op">=&gt;</span> response.text())</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  .then((data) <span class="op">=&gt;</span> console.log(data))<span class="op">;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>console.log(<span class="st">&quot;Código síncrono.&quot;</span>)<span class="op">;</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>Con <strong>async/await</strong> seguimos manejando promesas, sin
+      embargo, hay ciertos cambios importantes:</p>
+    <ul>
+      <li>No encadenamos mediante <strong>.then()</strong>, sino que usamos un
+        sistema más tradicional.</li>
+      <li>Abandonamos el modelo <strong>no bloqueante</strong> y pasamos a uno
+        <strong>bloqueante</strong>.
+      </li>
+    </ul>
+    <h3 id="la-palabra-clave-await">La palabra clave await</h3>
+    <p>Vamos a modificar el fragmento de código anterior, para manejar la
+      <em>promise</em> que devuelve el <strong>fetch()</strong>, pero en lugar
+      de gestionarla con <strong>.then()</strong>, lo haremos con await.
+      Simplemente, cualquier <em>promise</em> que tengamos, le añadimos la
+      palabra clave <strong>await</strong> antes.
+    </p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb3">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>const response <span class="op">=</span> <span class="cf">await</span> fetch(<span class="st">&quot;/robots.txt&quot;</span>)<span class="op">;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>const data <span class="op">=</span> <span class="cf">await</span> response.text()<span class="op">;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>console.log(data)<span class="op">;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>console.log(<span class="st">&quot;Código síncrono.&quot;</span>)<span class="op">;</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <blockquote>
+      <p>Lo que hace <strong>await</strong> es <strong>detener la ejecución y
+          no continuar</strong>. Se espera a que se resuelva la promesa, y
+        <strong>hasta que no lo haga</strong>, no continua. A diferencia del
+        <strong>.then()</strong>, aquí tenemos un código
+        <strong>bloqueante</strong>.
+      </p>
+    </blockquote>
+    <p>Ahora, vamos a introducir este fragmento de código dentro de una
+      función llamada request(). Quedaría de la siguiente forma:</p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb4">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>function request() {</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  const response <span class="op">=</span> <span class="cf">await</span> fetch(<span class="st">&quot;/robots.txt&quot;</span>)<span class="op">;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  const data <span class="op">=</span> <span class="cf">await</span> response.text()<span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> data<span class="op">;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>request()<span class="op">;</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>Sin embargo, aquí tenemos un problema. Estamos utilizando
+      <strong>await</strong> (<strong><em>asíncrono</em></strong>) dentro de
+      <strong>request()</strong> (<strong><em>síncrono</em></strong>), por lo
+      que antes de ejecutarla, al intentarla definir, nos aparecerá el
+      siguiente <em>error</em>:
+    </p>
+    <blockquote>
+      <p><strong>Uncaught SyntaxError: await is only valid in async functions
+          and the top level bodies of modules</strong></p>
+    </blockquote>
+    <h3 id="la-palabra-clave-async">La palabra clave async</h3>
+    <p>Para resolver el problema anterior y poder utilizar el await dentro
+      de nuestra función, sólo tenemos que definir nuestra función como
+      función asíncrona y al llamarla utilizar nuevamente el await:</p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb5">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> function request() {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  const response <span class="op">=</span> <span class="cf">await</span> fetch(<span class="st">&quot;/robots.txt&quot;</span>)<span class="op">;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  const data <span class="op">=</span> <span class="cf">await</span> response.text()<span class="op">;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> data<span class="op">;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> request()<span class="op">;</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>Sin embargo, vamos a pararnos un poco a pensar esto desde las
+      bases...<br />
+      Definamos <strong>dos funciones básicas exactamente iguales</strong>,
+      ambas devuelven lo mismo, pero una es <strong>síncrona</strong> y otra
+      <strong>asíncrona</strong>:
+    </p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb6">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>function sincrona() { <span class="cf">return</span> <span class="dv">42</span><span class="op">;</span> }</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> function asincrona() { <span class="cf">return</span> <span class="dv">42</span><span class="op">;</span> }</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>sincrona()<span class="op">;</span>   <span class="op">//</span> <span class="dv">42</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>asincrona()<span class="op">;</span>  <span class="op">//</span> Promise <span class="op">&lt;</span>fulfilled<span class="op">&gt;</span>: <span class="dv">42</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>En el caso de la función <em>sincrona()</em> devuelve directamente el
+      valor, sin embargo, en el caso de la función <em>asincrona()</em>
+      devuelve una <strong>promesa que se ha cumplido</strong> inmediatamente,
+      con el valor 42.</p>
+  </div>
+  <div class="cell markdown">
+    <blockquote>
+      <p>Recuerda que en el caso de querer controlar errores o promesas
+        rechazadas con <strong>async/await</strong>, siempre podrás usar bloques
+        <strong>try/catch</strong>.
+      </p>
+    </blockquote>
+  </div>
+  <section id="asyncawait--then" class="cell markdown">
+    <h3>Async/await + .then()</h3>
+    <p>En algunos casos, como <strong>al usar un fetch()</strong>, donde
+      tenemos que manejar <strong>dos promesas</strong>, es posible que nos
+      interese utilizar <strong>.then() para la primera</strong> promesa y
+      <strong>await para la segunda</strong>. De esta forma podemos
+      <strong>manejarlo todo directamente</strong>, sin tener que guardarlo en
+      constantes o variables temporales que no utilizaremos sino una sola
+      vez:
+    </p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb7">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> function request() {</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="cf">await</span> fetch(<span class="st">&quot;/robots.txt&quot;</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        .then(response <span class="op">=&gt;</span> response.text())<span class="op">;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> request()<span class="op">;</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>En este caso, observa que el <em>fetch()</em> devuelve una primera
+      que es manejada por el <em>.then()</em>. La segunda , devuelta por el
+      método <em>response.text()</em> se devuelve hacia fuera y es manejada
+      por el await, que espera a que se cumpla, y una vez cumplida, se
+      devuelve como valor de la función r<em>equest()</em>.</p>
+    <h3 id="top-level-await"><a href="https://caniuse.com/mdn-javascript_operators_await_top_level">Top
+        level</a> <strong>await</strong></h3>
+    <p>En principio, el comportamiento de await solo permite que se utilice
+      en el interior de funciones declaradas como async. Por lo que, si el
+      ejemplo anterior lo ejecutamos en una consola de Javascript, funcionará
+      correctamente (estamos escribiendo comandos de forma asíncrona), pero
+      <em>si lo escribimos en un fichero</em>, probablemente nos aparecerá el
+      siguiente <em>error</em>:
+    </p>
+    <blockquote>
+      <p><strong>Uncaught SyntaxError: await is only valid in async
+          function</strong></p>
+    </blockquote>
+    <p>Esto ocurre porque, como bien dice el mensaje de error, estamos
+      <em>ejecutando await en el contexto global</em> de la aplicación, y
+      debemos <em>ejecutarlo en un contexto de función asíncrona</em>. Muchas
+      veces, para solucionar esto, lo que se suele hacer es lo siguiente:
+    </p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb8">
+      <pre class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>function request() {</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (<span class="cf">async</span> () <span class="op">=&gt;</span> <span class="cf">await</span> fetch(<span class="st">&quot;/robots.txt&quot;</span>))()<span class="op">;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>Hemos incluido la función asíncrona con el <em>await dentro de un
+        paréntesis</em> que la envuelve y ejecuta <em>(función)()</em>, por lo
+      que tenemos una función asíncrona autoejecutable en un contexto
+      síncrono.</p>
+  </div>
+  <section id="asincronía-con-asyncawait" class="cell markdown">
+    <h3>Asincronía con async/await</h3>
+    <p>La función <em>doTask()</em> realiza 10 lanzamientos de un dado y nos
+      devuelve los resultados obtenidos o detiene la tarea si se obtiene un 6.
+      La implementación de la función sufre algunos cambios, simplificándose
+      considerablemente.</p>
+    <p>En primer lugar, añadimos la palabra clave async antes de los
+      parámetros de la arrow function. En segundo lugar, desaparece cualquier
+      mención a promesas, se devuelven directamente los objetos, ya que al ser
+      una función async se devolverá todo envuelto en una promesa:</p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb9">
+      <pre class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>const doTask <span class="op">=</span> <span class="cf">async</span> (iterations) <span class="op">=&gt;</span> {</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  const numbers <span class="op">=</span> []<span class="op">;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (let i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> iterations<span class="op">;</span> i<span class="op">++</span>) {</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    const number <span class="op">=</span> <span class="dv">1</span> <span class="op">+</span> Math.floor(Math.random() <span class="op">*</span> <span class="dv">6</span>)<span class="op">;</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    numbers.push(number)<span class="op">;</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (number <span class="op">===</span> <span class="dv">6</span>) {</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> {</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        error: true,</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>        message: <span class="st">&quot;Se ha sacado un 6&quot;</span>,</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>      }<span class="op">;</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> {</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    error: false,</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    value: numbers,</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>Pero donde se introducen cambios considerables es a la hora de
+      consumir las promesas con <em>async/await</em>. No tendríamos que
+      utilizar <em>.then()</em>, sino que podemos simplemente utilizar
+      <em>await</em> para esperar la resolución de la promesa, obteniendo el
+      valor directamente:
+    </p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb10">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>const resultado <span class="op">=</span> <span class="cf">await</span> doTask(<span class="dv">10</span>)<span class="op">;</span>   <span class="op">//</span> Devuelve un objeto, no una promesa</span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>Ciertos casos no permiten usar async/await. Por ejemplo, una función
+      <em>.map()</em> de un array de promesa. En esos casos, se recomienda
+      usar un <em>for.....of</em> o una promesa en grupo.
+    </p>
+  </div>
+  <section id="promesas-estáticas" class="cell markdown">
+    <h3>Promesas estáticas</h3>
+    <p>Mediante los <strong>métodos estáticos Promise.resolve()</strong> y
+      <strong>Promise.reject()</strong> podemos devolver una promesa cumplida
+      o rechazada respectivamente sin necesidad de crear una promesa con
+      <strong>new Promise()</strong>, algo que podría ser interesante o cómodo
+      en algunos casos.
+    </p>
+    <p>Observa que la siguiente <strong>función doTask() no es
+        asíncrona</strong>:</p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb11">
+      <pre class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>const doTask <span class="op">=</span> () <span class="op">=&gt;</span> {</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  const number <span class="op">=</span> <span class="dv">1</span> <span class="op">+</span> Math.floor(Math.random() <span class="op">*</span> <span class="dv">6</span>)<span class="op">;</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  const isEven <span class="op">=</span> number <span class="op">%</span> <span class="dv">2</span> <span class="op">===</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> isEven ? Promise.resolve(number) : Promise.reject(number)<span class="op">;</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>En este caso, generamos un número aleatorio y se devuelve una
+      promesa. Cuando el número generado es par se cumple la promesa, cuando
+      es impar, se rechaza. Sin embargo, ten en cuenta que el problema en este
+      caso es que la promesa no «envuelve» toda la función, por lo que si la
+      tarea tardase algún tiempo en generar el número, no podríamos utilizar
+      el .then() para consumir la promesa.</p>
+  </div>
+  <div class="cell markdown">
+    <blockquote>
+      <p><strong>Estas funciones estáticas se suelen utilizar en muy pocos
+          casos, para mantener cierta compatibilidad en funciones que se espera
+          que devuelvan una promesa.</strong></p>
+    </blockquote>
+  </div>
+  <div class="cell markdown">
+    <p><a href="https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Statements/async_function">Saber
+        Más: 🧠</a></p>
+  </div>
+  <div class="cell markdown">
+    <pre><code>                                                        EJERCICIOS</code></pre>
+  </div>
+  <div class="cell markdown">
+    <ul>
+      <li>
+        <p>Ejercicio 1:<br />
+          <strong>Crear una función que retorne una promesa que se resuelva
+            después de 2 segundos.</strong>
+        </p>
+      </li>
+      <li>
+        <p>Ejercicio 2:<br />
+          <strong>Crear una función asíncrona que espere el resultado de varias
+            promesas y las una en una sola variable saludo.</strong>
+        </p>
+      </li>
+      <li>
+        <p>Ejercicio 3:<br />
+          <strong>Crear una función asíncrona que maneje el error de una promesa
+            rechazada.</strong>
+        </p>
+      </li>
+      <li>
+        <p>Ejercicio 4:<br />
+          <strong>Promesa con async/await Crea una función asíncrona que espere a
+            que se resuelva una promesa que devuelve el mensaje “¡Hecho!” después de
+            1 segundo.</strong>
+        </p>
+      </li>
+      <li>
+        <p>Ejercicio 5:<br />
+          <strong>Crea una función asíncrona que intente esperar a que se resuelva
+            una promesa que se rechaza con el mensaje “¡Error!” después de 1
+            segundo. Asegúrate de manejar el error correctamente.</strong>
+        </p>
+      </li>
+      <li>
+        <p>Ejercicio 6:<br />
+          <strong>Crear una función asíncrona que maneje el error de una petición
+            HTTP fallida.</strong>
+        </p>
+      </li>
+    </ul>
+  </div>
+  <div class="cell markdown">
+    <p>👍 <a href="../Ejercicios/ej8.js" target="_blank">Ejercicios :</a></p>
+  </div>
+</body>
+
+</html>

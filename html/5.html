@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>¿Qué hace el operador de extensión en JS?</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+
+      p,
+      h2,
+      h3 {
+        orphans: 3;
+        widows: 3;
+      }
+
+      h2,
+      h3,
+      h4 {
+        page-break-after: avoid;
+      }
+    }
+
+    p {
+      margin: 1em 0;
+    }
+
+    a {
+      color: #1a1a1a;
+    }
+
+    a:visited {
+      color: #1a1a1a;
+    }
+
+    img {
+      max-width: 100%;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      margin-top: 1.4em;
+    }
+
+    h5,
+    h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+
+    h6 {
+      font-weight: normal;
+    }
+
+    ol,
+    ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+
+    li>ol,
+    li>ul {
+      margin-top: 0;
+    }
+
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+
+    .sourceCode {
+      background-color: transparent;
+      overflow: visible;
+    }
+
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+
+    table caption {
+      margin-bottom: 0.75em;
+    }
+
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+
+    #TOC li {
+      list-style: none;
+    }
+
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+
+    #TOC>ul {
+      padding-left: 0;
+    }
+
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+
+    code {
+      white-space: pre-wrap;
+    }
+
+    span.smallcaps {
+      font-variant: small-caps;
+    }
+
+    div.columns {
+      display: flex;
+      gap: min(4vw, 1.5em);
+    }
+
+    div.column {
+      flex: auto;
+      overflow-x: auto;
+    }
+
+    div.hanging-indent {
+      margin-left: 1.5em;
+      text-indent: -1.5em;
+    }
+
+    ul.task-list {
+      list-style: none;
+    }
+
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+
+    pre>code.sourceCode {
+      white-space: pre;
+      position: relative;
+    }
+
+    pre>code.sourceCode>span {
+      display: inline-block;
+      line-height: 1.25;
+    }
+
+    pre>code.sourceCode>span:empty {
+      height: 1.2em;
+    }
+
+    .sourceCode {
+      overflow: visible;
+    }
+
+    code.sourceCode>span {
+      color: inherit;
+      text-decoration: inherit;
+    }
+
+    div.sourceCode {
+      margin: 1em 0;
+    }
+
+    pre.sourceCode {
+      margin: 0;
+    }
+
+    @media screen {
+      div.sourceCode {
+        overflow: auto;
+      }
+    }
+
+    @media print {
+      pre>code.sourceCode {
+        white-space: pre-wrap;
+      }
+
+      pre>code.sourceCode>span {
+        text-indent: -5em;
+        padding-left: 5em;
+      }
+    }
+
+    pre.numberSource code {
+      counter-reset: source-line 0;
+    }
+
+    pre.numberSource code>span {
+      position: relative;
+      left: -4em;
+      counter-increment: source-line;
+    }
+
+    pre.numberSource code>span>a:first-child::before {
+      content: counter(source-line);
+      position: relative;
+      left: -1em;
+      text-align: right;
+      vertical-align: baseline;
+      border: none;
+      display: inline-block;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      padding: 0 4px;
+      width: 4em;
+      color: #aaaaaa;
+    }
+
+    pre.numberSource {
+      margin-left: 3em;
+      border-left: 1px solid #aaaaaa;
+      padding-left: 4px;
+    }
+
+    div.sourceCode {}
+
+    @media screen {
+      pre>code.sourceCode>span>a:first-child::before {
+        text-decoration: underline;
+      }
+    }
+
+    code span.al {
+      color: #ff0000;
+      font-weight: bold;
+    }
+
+    /* Alert */
+    code span.an {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* Annotation */
+    code span.at {
+      color: #7d9029;
+    }
+
+    /* Attribute */
+    code span.bn {
+      color: #40a070;
+    }
+
+    /* BaseN */
+    code span.bu {
+      color: #008000;
+    }
+
+    /* BuiltIn */
+    code span.cf {
+      color: #007020;
+      font-weight: bold;
+    }
+
+    /* ControlFlow */
+    code span.ch {
+      color: #4070a0;
+    }
+
+    /* Char */
+    code span.cn {
+      color: #880000;
+    }
+
+    /* Constant */
+    code span.co {
+      color: #60a0b0;
+      font-style: italic;
+    }
+
+    /* Comment */
+    code span.cv {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* CommentVar */
+    code span.do {
+      color: #ba2121;
+      font-style: italic;
+    }
+
+    /* Documentation */
+    code span.dt {
+      color: #902000;
+    }
+
+    /* DataType */
+    code span.dv {
+      color: #40a070;
+    }
+
+    /* DecVal */
+    code span.er {
+      color: #ff0000;
+      font-weight: bold;
+    }
+
+    /* Error */
+    code span.ex {}
+
+    /* Extension */
+    code span.fl {
+      color: #40a070;
+    }
+
+    /* Float */
+    code span.fu {
+      color: #06287e;
+    }
+
+    /* Function */
+    code span.im {
+      color: #008000;
+      font-weight: bold;
+    }
+
+    /* Import */
+    code span.in {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* Information */
+    code span.kw {
+      color: #007020;
+      font-weight: bold;
+    }
+
+    /* Keyword */
+    code span.op {
+      color: #666666;
+    }
+
+    /* Operator */
+    code span.ot {
+      color: #007020;
+    }
+
+    /* Other */
+    code span.pp {
+      color: #bc7a00;
+    }
+
+    /* Preprocessor */
+    code span.sc {
+      color: #4070a0;
+    }
+
+    /* SpecialChar */
+    code span.ss {
+      color: #bb6688;
+    }
+
+    /* SpecialString */
+    code span.st {
+      color: #4070a0;
+    }
+
+    /* String */
+    code span.va {
+      color: #19177c;
+    }
+
+    /* Variable */
+    code span.vs {
+      color: #4070a0;
+    }
+
+    /* VerbatimString */
+    code span.wa {
+      color: #60a0b0;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    /* Warning */
+    .display.math {
+      display: block;
+      text-align: center;
+      margin: 0.5rem auto;
+    }
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+
+<body>
+  <div class="cell markdown">
+    <pre><code>                            Preguntas Teoricas</code></pre>
+  </div>
+  <section id="5-qué-hace-el-operador-de-extensión-en-js" class="cell markdown">
+    <h2><strong><em>5. ¿Qué hace el operador de extensión en
+          JS?</em></strong></h2>
+    <p><img src="../html/imgHtml/poster.png" alt="" /></p>
+    <p><a href="https://youtu.be/gFvWNjVy-wc">Spread ▶</a></p>
+    <p>El operador <strong>spread</strong> te permite propagar los elementos
+      de un iterable (<em>como arrays, cadenas u objetos</em>), en otro
+      iterable o llamada a función.</p>
+    <p>Se denota con tres puntos <strong>«...»</strong> seguidos de una
+      expresión o un iterable. El operador spread es una potente herramienta
+      que proporciona una forma concisa y flexible de trabajar con datos en
+      JavaScript.</p>
+    <p><img src="../html/imgHtml/hiru.png" alt="falta 1" /></p>
+    <p>Puede utilizarse para concatenar arrays, crear copias superficiales
+      de arrays, convertir cadenas en arrays de caracteres, fusionar o clonar
+      objetos y pasar dinámicamente valores a funciones o constructores, entre
+      otros casos de uso.</p>
+    <p>El operador spread simplifica las operaciones complejas y permite un
+      código más expresivo y eficiente. Esto lo convierte en una función muy
+      popular</p>
+    <h3 id="sintaxis-y-uso-del-operador-spread-de-javascript">Sintaxis y Uso
+      del Operador Spread de JavaScript</h3>
+    <p>Veamos algunos ejemplos de uso del operador spread con arrays,
+      cadenas y objetos para ilustrar su sintaxis y uso.</p>
+    <h4 id="1-concatenar-arrays">1. Concatenar Arrays</h4>
+    <p>Puedes utilizar el operador spread para distribuir los elementos de
+      un array en otro array. Esto es especialmente útil para concatenar
+      arrays o crear una copia superficial de una array.</p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb2">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>const arr1 <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>]<span class="op">;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>const arr2 <span class="op">=</span> [<span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>]<span class="op">;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> Concatenate arrays using spread operator</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>const concatenatedArr <span class="op">=</span> [...arr1, ...arr2]<span class="op">;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>console.log(concatenatedArr)<span class="op">;</span> <span class="op">//</span> Output: [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>]</span></code></pre>
+    </div>
+  </div>
+  <section id="2-extendiendo-cadenas-de-texto" class="cell markdown">
+    <h4>2. Extendiendo Cadenas de Texto</h4>
+    <p>Puedes utilizar el operador spread para desglosar los caracteres de
+      una cadena en un array. Esto es útil para convertir una cadena en un
+      array de caracteres, que puede manipularse o combinarse con otros arrays
+      utilizando métodos de array.</p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb3">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>const <span class="bu">str</span> <span class="op">=</span> <span class="st">&quot;Hello&quot;</span><span class="op">;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> Spread characters of a string into an array</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>const charArray <span class="op">=</span> [...<span class="bu">str</span>]<span class="op">;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>console.log(charArray)<span class="op">;</span> <span class="op">//</span> Output: [<span class="st">&#39;H&#39;</span>, <span class="st">&#39;e&#39;</span>, <span class="st">&#39;l&#39;</span>, <span class="st">&#39;l&#39;</span>, <span class="st">&#39;o&#39;</span>]</span></code></pre>
+    </div>
+  </div>
+  <section id="3-fusionar-y-clonar-objetos" class="cell markdown">
+    <h4>3. Fusionar y Clonar Objetos</h4>
+    <p>Puedes utilizar el operador spread para propagar las propiedades de
+      un objeto en otro objeto. Esto es útil para fusionar o clonar objetos,
+      crear un nuevo objeto con algunas propiedades anuladas o extraer
+      propiedades específicas de un objeto.</p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb4">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>const obj1 <span class="op">=</span> { a: <span class="dv">1</span>, b: <span class="dv">2</span> }<span class="op">;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>const obj2 <span class="op">=</span> { b: <span class="dv">3</span>, c: <span class="dv">4</span> }<span class="op">;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> Merge objects using spread operator</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>const mergedObj <span class="op">=</span> { ...obj1, ...obj2 }<span class="op">;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>console.log(mergedObj)<span class="op">;</span> <span class="op">//</span> Output: { a: <span class="dv">1</span>, b: <span class="dv">3</span>, c: <span class="dv">4</span> }</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> Clone an <span class="bu">object</span> using spread operator</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>const clonedObj <span class="op">=</span> { ...obj1 }<span class="op">;</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>console.log(clonedObj)<span class="op">;</span> <span class="op">//</span> Output: { a: <span class="dv">1</span>, b: <span class="dv">2</span> }</span></code></pre>
+    </div>
+  </div>
+  <section id="4-extender-argumentos-de-función" class="cell markdown">
+    <h4>4. Extender Argumentos de Función</h4>
+    <p>El operador spread también puede ser usado en otros contextos, como
+      los argumentos de una función, para pasar valores de manera dinámica a
+      una función o constructor.</p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb5">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> Pass array elements <span class="im">as</span> arguments to a function using the spread operator</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>const numbers <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>]<span class="op">;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>const <span class="bu">sum</span> <span class="op">=</span> (a, b, c) <span class="op">=&gt;</span> a <span class="op">+</span> b <span class="op">+</span> c<span class="op">;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>console.log(<span class="bu">sum</span>(...numbers))<span class="op">;</span> <span class="op">//</span> Output: <span class="dv">6</span></span></code></pre>
+    </div>
+  </div>
+  <section id="5-combinación-del-operador-spread-con-el-parámetro-rest" class="cell markdown">
+    <h4>5. Combinación del Operador Spread con el Parámetro rest</h4>
+    <p>El operador spread puede utilizarse junto con otras funciones
+      modernas de JavaScript, como la desestructuración de arrays y objetos,
+      para habilitar potentes técnicas de programación funcional. Te permite
+      extraer y manipular elementos de arrays o propiedades de objetos con una
+      sintaxis concisa y expresiva.</p>
+  </section>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb6">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>const numbers <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>]<span class="op">;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>const [first, second, ...rest] <span class="op">=</span> numbers<span class="op">;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>console.log(first)<span class="op">;</span> <span class="op">//</span> Output: <span class="dv">1</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>console.log(second)<span class="op">;</span> <span class="op">//</span> Output: <span class="dv">2</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>console.log(rest)<span class="op">;</span> <span class="op">//</span> Output: [<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>]</span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>Los ejemplos anteriores muestran la versatilidad y flexibilidad del
+      operador spread en JavaScript, convirtiéndolo en una herramienta
+      poderosa para manipular y combinar datos de manera concisa y
+      eficiente.</p>
+    <h3 id="comprender-el-operador-spread-y-las-copias-superficiales">Comprender
+      el Operador Spread y las Copias Superficiales</h3>
+    <p>Es importante tener en cuenta que el operador spread crea copias
+      superficiales de matrices y objetos, y puede tener implicaciones de
+      rendimiento cuando se utiliza con arrays u objetos grandes.</p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb7">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>const originalArray <span class="op">=</span> [[<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>], <span class="dv">12</span>]<span class="op">;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>const copiedArray <span class="op">=</span> [...originalArray]<span class="op">;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>copiedArray[<span class="dv">0</span>].push(<span class="dv">99</span>)<span class="op">;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>console.log(originalArray)<span class="op">;</span> <span class="op">//</span> Output: [[<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">99</span>], <span class="dv">12</span>]</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>console.log(copiedArray)<span class="op">;</span> <span class="op">//</span> Output: [[<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">99</span>], <span class="dv">12</span>]</span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>En este código, <em>originalArray</em> es una array con cuatro
+      elementos. Utilizando el operador <em>spread</em>, creamos un nuevo
+      array <em>copiedArray</em> y propagamos en él los elementos de
+      originalArray. A continuación, modificamos el primer elemento de
+      <em>copiedArray</em> añadiendo <em>99</em> con el método push.
+    </p>
+    <p>Cuando obtengas la salida de <em>copiedArray</em>, la salida mostrará
+      que se ha añadido 99 al array del primer elemento, pero hay un problema
+      con la <strong>copia superficial</strong> que hace el operador spread.
+      <strong>El cambio en copiedArray afecta a originalArray.</strong>
+    </p>
+    <p>Esto se debe a que el operador spread no crea copias completamente
+      nuevas de los elementos o propiedades, sino que <strong>comparte
+        referencias a los elementos o propiedades originales</strong>. <em>Esto
+        puede tener implicaciones de rendimiento cuando se trabaja con arrays u
+        objetos grandes.</em></p>
+    <p>Por lo tanto, si trabajas con arrays u objetos grandes, o si
+      necesitas hacer modificaciones profundas en el array u objeto copiado
+      sin afectar al original, quizá debas considerar otros enfoques, como la
+      copia profunda o el uso de bibliotecas diseñadas específicamente para
+      manejar estructuras de datos complejas.</p>
+    <p>Es esencial utilizar el operador spread con criterio y tener en
+      cuenta las mejores prácticas para un rendimiento y una capacidad de
+      mantenimiento óptimos.</p>
+  </div>
+  <section id="rest" class="cell markdown">
+    <h3>Rest</h3>
+    <p><img src="../html/imgHtml/SR.png" alt="" /></p>
+  </section>
+  <div class="cell markdown">
+    <p>Es inverso al operador de dispersión. mientras que el operador de
+      extensión expande elementos de un iterable, el operador de resto los
+      comprime. Recoge varios elementos. En funciones en las que necesitamos
+      pasar argumentos pero no estamos seguros de cuántos tenemos que pasar,
+      el parámetro rest lo hace más fácil.</p>
+    <p>La principal diferencia entre los dos operadores radica en sus
+      nombres. El operador de extensión en JavaScript expande los valores de
+      matrices y cadenas en elementos individuales , mientras que el operador
+      de resto coloca los valores de los datos especificados por el usuario en
+      una matriz de JavaScript. Echemos un vistazo al siguiente ejemplo para
+      comprender esta diferencia:</p>
+  </div>
+  <div class="cell code" data-vscode="{&quot;languageId&quot;:&quot;javascript&quot;}">
+    <div class="sourceCode" id="cb8">
+      <pre
+        class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>function spreadAndRest (firstArg, secondArg, ...otherArgs) {</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>	console.log(firstArg, secondArg)<span class="op">;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    console.log(otherArgs)<span class="op">;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> <span class="dv">1</span> <span class="dv">2</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="op">//</span> [<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>]</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>spreadAndRest(...[<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>])<span class="op">;</span> </span></code></pre>
+    </div>
+  </div>
+  <div class="cell markdown">
+    <p>En el ejemplo anterior, estamos usando el operador rest …otherArgs en
+      el parámetro de función para colocar los valores pasados ​​en la llamada a
+      la función (3, 4, 5, 6) en una matriz. De manera similar, usar el
+      operador de extensión durante la llamada a la función ayuda a distribuir
+      los elementos de una matriz en elementos individuales para la función
+      spreadAndRest .</p>
+    <p><a href="https://youtu.be/viOGjE4yf0I">Rest ▶</a></p>
+  </div>
+  <div class="cell markdown">
+    <p><a href="https://www.w3schools.com/howto/howto_js_spread_operator.asp">Saber
+        Más: 🧠</a></p>
+  </div>
+  <div class="cell markdown">
+    <pre><code>                                                        EJERCICIOS</code></pre>
+  </div>
+  <div class="cell markdown">
+    <ul>
+      <li>
+        <p>Ejercicio 1:<br />
+          <strong>Combina dos arrays [1, 2, 3] y [4, 5, 6] en un solo
+            array.</strong>
+        </p>
+      </li>
+      <li>
+        <p>Ejercicio 2:<br />
+          <strong>Crea una copia del array [1, 2, 3]. Añade un nuevo elemento al
+            inicio del array</strong>
+        </p>
+      </li>
+      <li>
+        <p>Ejercicio 3:<br />
+          <strong>Combina dos objetos {nombre: "Beatriz", edad: 47} y {puesto:
+            "Director", antigüedad: 4} en un solo objeto y crea una
+            copia</strong>
+        </p>
+      </li>
+      <li>
+        <p>Ejercicio 4:<br />
+          <strong>Utiliza el operador de propagación para sumar todos los
+            elementos de un array.</strong>
+        </p>
+      </li>
+      <li>
+        <p>Ejercio 5:<br />
+          <strong>Crea una función que acepte múltiples argumentos y los imprima.
+            Como ejemplo de uso imprime "Hola", "Mundo",
+            "JavaScript"</strong>
+        </p>
+      </li>
+    </ul>
+  </div>
+  <div class="cell markdown">
+    <p>👍 <a href="../Ejercicios/ej5.js" target="_blank">Soluciones :</a></p>
+  </div>
+</body>
+
+</html>
