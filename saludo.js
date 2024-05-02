@@ -1,3 +1,4 @@
+'use strict';
 const boton = document.getElementById("boton");
 const nombre = document.getElementById("nombre");
 const h2 = document.getElementById("h2");
