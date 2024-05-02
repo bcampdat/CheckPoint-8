@@ -1,18 +1,12 @@
-"use strict";
-function variables() {
-    let nombre;
+const boton = document.getElementById("boton");
+const nombre = document.getElementById("nombre");
+const h2 = document.getElementById("h2");
+const h1 = document.getElementById("h1");
 
-    console.log(nombre);
-    console.log(typeof nombre);
+boton.addEventListener("click", recibirNombre);
 
-    console.log('hola');
-    console.log('adios');
-
-    nombre = 'Beatriz';
-
-    console.log(nombre);
-
-    nombre = prompt('Introduce tu nombre');
-
-    console.log(nombre);
+function recibirNombre () {
+  h1.textContent = nombre.value;
+  h2.textContent = "Hola 👋";
+  nombre.value = "";
 }
