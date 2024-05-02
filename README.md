@@ -2,7 +2,7 @@
 
 Ctrl + C (Copia) y Ctrl + V (pega) El código  o simplemente escribe tu código 😜 **/
 
- ![PlayCode](PlayCode.PNG) 
+ ![PlayCode](./img/PlayCode.PNG) 
 
 A por ello 💪 eres un crak !!!
 
